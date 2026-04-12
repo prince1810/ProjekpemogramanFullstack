@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - SIMKEL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-white shadow-sm border-b px-6 py-4 mb-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black text-blue-600 tracking-tighter">
+                SIM<span class="text-gray-800">KEL.</span>
+            </h1>
+            <button onclick="prosesLogout()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-bold transition">
+                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 pb-12">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Laporan</p>
+                    <h3 id="statTotal" class="text-4xl font-black text-gray-800">0</h3>
+                </div>
+                <div class="bg-blue-50 text-blue-500 w-14 h-14 rounded-full flex items-center justify-center text-2xl"><i class="fas fa-folder-open"></i></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Menunggu Diproses</p>
+                    <h3 id="statPending" class="text-4xl font-black text-yellow-500">0</h3>
+                </div>
+                <div class="bg-yellow-50 text-yellow-500 w-14 h-14 rounded-full flex items-center justify-center text-2xl"><i class="fas fa-clock"></i></div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Laporan Selesai</p>
+                    <h3 id="statDone" class="text-4xl font-black text-green-500">0</h3>
+                </div>
+                <div class="bg-green-50 text-green-500 w-14 h-14 rounded-full flex items-center justify-center text-2xl"><i class="fas fa-check-circle"></i></div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                <h2 class="text-lg font-bold text-gray-800">Manajemen Keluhan</h2>
+                
+                <div class="relative w-full md:w-72">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" id="searchInput" onkeyup="cariData()" placeholder="Cari nama pengirim..." 
+                        class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-gray-400 font-bold text-xs uppercase tracking-widest">
+                        <tr>
+                            <th class="p-4 border-b">Pengirim</th>
+                            <th class="p-4 border-b">Kategori</th>
+                            <th class="p-4 border-b">Pesan</th>
+                            <th class="p-4 border-b text-center">Status</th>
+                            <th class="p-4 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list" class="divide-y divide-gray-100 text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        if(!localStorage.getItem('isAdmin')) window.location.href = 'login.html';
+
+        let semuaData = []; 
+
+        async function loadData() {
+            try {
+                const res = await fetch('http://localhost:3000/api/complaints');
+                semuaData = await res.json();
+                renderTabel(semuaData);
+            } catch (err) {
+                console.error("Gagal load:", err);
+            }
+        }
+
+        function renderTabel(data) {
+            // Update Statistik
+            document.getElementById('statTotal').innerText = data.length;
+            document.getElementById('statPending').innerText = data.filter(d => d.status === 'Menunggu').length;
+            document.getElementById('statDone').innerText = data.filter(d => d.status === 'Selesai').length;
+
+            const tbody = document.getElementById('list');
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-400 italic">Belum ada data keluhan.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(d => {
+                let badgeClass = 'bg-yellow-100 text-yellow-700';
+                if(d.status === 'Diproses') badgeClass = 'bg-blue-100 text-blue-700';
+                if(d.status === 'Selesai') badgeClass = 'bg-green-100 text-green-700';
+                
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-4">
+                            <p class="font-bold text-gray-800">${d.customer_name}</p>
+                            <p class="text-xs text-gray-500">${d.customer_email}</p>
+                        </td>
+                        <td class="p-4"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold uppercase">${d.category_name}</span></td>
+                        <td class="p-4 text-gray-600 w-1/3">${d.message}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-3 py-1 ${badgeClass} rounded-full text-[10px] font-black uppercase tracking-wider">${d.status}</span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="ubahStatus(${d.id}, '${d.status}')" class="bg-blue-500 hover:bg-blue-600 text-white w-8 h-8 rounded-lg shadow transition" title="Ubah Status"><i class="fas fa-edit text-xs"></i></button>
+                                <button onclick="hapusData(${d.id})" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-lg shadow transition" title="Hapus"><i class="fas fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Fitur Cari
+        function cariData() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filterData = semuaData.filter(d => d.customer_name.toLowerCase().includes(keyword));
+            renderTabel(filterData);
+        }
+
+        // Fitur Update Status (PATCH)
+        async function ubahStatus(id, statusLama) {
+            const { value: statusBaru } = await Swal.fire({
+                title: 'Update Status',
+                input: 'select',
+                inputOptions: { 'Menunggu': 'Menunggu', 'Diproses': 'Diproses', 'Selesai': 'Selesai' },
+                inputValue: statusLama,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal'
+            });
+
+            if (statusBaru && statusBaru !== statusLama) {
+                await fetch(`http://localhost:3000/api/complaints/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: statusBaru })
+                });
+                Swal.fire('Berhasil!', 'Status diperbarui', 'success');
+                loadData(); // Refresh tabel
+            }
+        }
+
+        // Fitur Delete
+        async function hapusData(id) {
+            const confirm = await Swal.fire({
+                title: 'Yakin hapus data?', text: "Data hilang permanen!", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Ya, Hapus!'
+            });
+
+            if (confirm.isConfirmed) {
+                await fetch(`http://localhost:3000/api/complaints/${id}`, { method: 'DELETE' });
+                Swal.fire('Terhapus!', '', 'success');
+                loadData();
+            }
+        }
+
+        function prosesLogout() {
+            localStorage.removeItem('isAdmin');
+            window.location.href = 'login.html';
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

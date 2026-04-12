@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal SIMKEL - Layanan Pengaduan Masyarakat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans text-gray-800">
+
+    <nav class="bg-white shadow-sm fixed w-full z-50 top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="bg-blue-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-bullhorn text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-black text-blue-600 tracking-tighter leading-none">SIM<span class="text-gray-900">KEL</span></h1>
+                        <p class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Layanan Pengaduan</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <a href="login.html" class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                        <i class="fas fa-user-shield"></i> Portal Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 flex flex-col lg:flex-row gap-12 items-center min-h-screen">
+        
+        <div class="w-full lg:w-1/2 space-y-8">
+            <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                Suara Anda, Perubahan Kita
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 leading-tight">
+                Layanan Aspirasi dan Pengaduan <span class="text-blue-600">Online.</span>
+            </h2>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                Sampaikan laporan, keluhan, atau aspirasi Anda langsung kepada kami. Kami menjamin kerahasiaan data Anda dan memastikan setiap laporan diproses dengan cepat.
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-200">
+                <div class="space-y-2">
+                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-blue-600 shadow border border-gray-100 font-bold">1</div>
+                    <h4 class="font-bold text-gray-900">Tulis Laporan</h4>
+                    <p class="text-xs text-gray-500">Isi form keluhan dengan data yang valid.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-yellow-500 shadow border border-gray-100 font-bold">2</div>
+                    <h4 class="font-bold text-gray-900">Proses</h4>
+                    <p class="text-xs text-gray-500">Laporan Anda akan diverifikasi & ditindaklanjuti.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-500 shadow border border-gray-100 font-bold">3</div>
+                    <h4 class="font-bold text-gray-900">Selesai</h4>
+                    <p class="text-xs text-gray-500">Tindakan selesai dan layanan dievaluasi.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-1/2">
+            <div class="bg-white p-8 lg:p-10 rounded-3xl shadow-2xl border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10"></div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <i class="fas fa-edit text-blue-500"></i> Buat Laporan Baru
+                </h3>
+                
+                <form id="formKeluhan" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nama Lengkap</label>
+                        <input type="text" id="nama" placeholder="Masukkan nama Anda" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Alamat Email</label>
+                        <input type="email" id="email" placeholder="contoh@email.com" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Kategori Keluhan</label>
+                        <div class="relative">
+                            <select id="kategori" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition appearance-none text-sm cursor-pointer">
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <option value="1">Fasilitas</option>
+                                <option value="2">Pelayanan</option>
+                                <option value="3">Teknis</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-400 text-sm pointer-events-none"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Isi Laporan / Pesan</label>
+                        <textarea id="pesan" rows="4" placeholder="Ceritakan kronologi keluhan Anda dengan jelas..." class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition resize-none text-sm"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-200 transition transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Kirim Laporan Sekarang
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-sm text-gray-500">
+        <p>&copy; PEMOGRAMAN FULLSTACK</p>
+    </footer>
+
+    <script>
+        document.getElementById('formKeluhan').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                customer_name: document.getElementById('nama').value,
+                customer_email: document.getElementById('email').value,
+                category_id: document.getElementById('kategori').value,
+                message: document.getElementById('pesan').value
+            };
+
+            Swal.fire({ title: 'Memproses Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const res = await fetch('http://localhost:3000/api/complaints', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Laporan Terkirim!',
+                        text: 'Terima kasih atas masukan Anda. Kami akan segera menindaklanjutinya.',
+                        confirmButtonColor: '#2563eb'
+                    });
+                    e.target.reset(); 
+                } else {
+                    Swal.fire('Perhatian!', result.message, 'warning'); 
+                }
+            } catch (error) {
+                Swal.fire('Server Error', 'Gagal terhubung ke sistem. Pastikan server aktif.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
