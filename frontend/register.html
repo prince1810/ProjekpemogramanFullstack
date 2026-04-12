@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - SIMKEL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-blue-50 flex items-center justify-center min-h-screen font-sans p-4">
+    <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-blue-100 w-full max-w-md border border-white">
+        
+        <a href="login-user.html" class="text-sm font-bold text-gray-400 hover:text-blue-600 transition inline-block mb-8">
+            <i class="fas fa-arrow-left mr-1"></i> Kembali
+        </a>
+
+        <div class="text-center mb-8">
+            <div class="bg-blue-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200 rotate-3">
+                <i class="fas fa-user-plus text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tight">Daftar Akun</h2>
+            <p class="text-sm text-gray-500 font-medium">Buat akun kelompok Anda sekarang</p>
+        </div>
+        
+        <form id="registerForm" class="space-y-5">
+            <div>
+                <label class="block text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1 ml-1">Nama Lengkap</label>
+                <input type="text" id="nama" required placeholder="Nama Mahasiswa" 
+                    class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition font-medium text-gray-800">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1 ml-1">Alamat Email</label>
+                <input type="email" id="email" required placeholder="email@bebas.com"
+                    class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition font-medium text-gray-800">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1 ml-1">Password</label>
+                <input type="password" id="pass" required placeholder="••••••••"
+                    class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition font-medium text-gray-800">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-100 transition transform hover:-translate-y-1 active:scale-95">
+                Daftar Sekarang
+            </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-500 mt-8 font-medium">
+            Sudah punya akun? <a href="login-user.html" class="text-blue-600 font-black hover:underline">Masuk di sini</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Loading state pas klik daftar biar pro
+            Swal.fire({
+                title: 'Sedang Memproses...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            
+            const data = {
+                nama: document.getElementById('nama').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('pass').value
+            };
+
+            try {
+                const res = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Akun ' + data.nama + ' sudah terdaftar. Silakan login di pintu user.',
+                        icon: 'success',
+                        confirmButtonText: 'Lanjut ke Login',
+                        confirmButtonColor: '#2563eb'
+                    }).then(() => {
+                        // DIARAHKAN KE LOGIN-USER BUKAN LOGIN ADMIN
+                        window.location.href = 'login-user.html';
+                    });
+                } else {
+                    Swal.fire('Gagal', result.message || 'Gagal daftar akun.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Gagal terhubung ke server. Pastikan server.js sudah jalan!', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

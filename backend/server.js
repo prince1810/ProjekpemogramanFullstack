@@ -8,7 +8,6 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Konfigurasi Database
 const dbConfig = {
     host: 'localhost',
     user: 'root',
@@ -17,121 +16,64 @@ const dbConfig = {
 };
 
 // ==========================================
-// API 1: CREATE KELUHAN
+// API 1: REGISTER USER BARU
 // ==========================================
-app.post('/api/complaints', async (req, res) => {
+app.post('/api/register', async (req, res) => {
     try {
-        const { customer_name, customer_email, category_id, message } = req.body;
-
-        // Validasi Input
-        if (!customer_name || !customer_email || !category_id || !message) {
-            return res.status(400).json({ status: 'error', message: 'Semua kolom wajib diisi!' });
-        }
-        if (!customer_email.includes('@')) {
-            return res.status(400).json({ status: 'error', message: 'Format email tidak valid!' });
-        }
-
+        const { nama, email, password } = req.body;
         const db = await mysql.createConnection(dbConfig);
-        await db.execute('INSERT INTO complaints (customer_name, customer_email, category_id, message) VALUES (?, ?, ?, ?)', [customer_name, customer_email, category_id, message]);
-        await db.end();
+        
+        // Cek email duplikat
+        const [exist] = await db.execute('SELECT email FROM users WHERE email = ?', [email]);
+        if (exist.length > 0) {
+            await db.end();
+            return res.status(400).json({ status: 'error', message: 'Email sudah terdaftar!' });
+        }
 
-        res.status(201).json({ status: 'success', message: 'Keluhan berhasil dikirim' });
+        await db.execute('INSERT INTO users (nama, email, password) VALUES (?, ?, ?)', [nama, email, password]);
+        await db.end();
+        res.status(201).json({ status: 'success', message: 'Registrasi Berhasil!' });
     } catch (error) {
-        console.error('Error Create Complaint:', error);
-        res.status(500).json({ status: 'error', message: 'Terjadi kesalahan pada server.' });
+        res.status(500).json({ status: 'error', message: 'Gagal Register' });
     }
 });
 
 // ==========================================
-// API 2: LOGIN ADMIN
+// API 2: LOGIN (BISA ADMIN / USER)
 // ==========================================
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+        const db = await mysql.createConnection(dbConfig);
 
-        if (!username || !password) {
-            return res.status(400).json({ status: 'error', message: 'Username dan password wajib diisi!' });
+        // Cek ke tabel Admin dulu
+        const [admin] = await db.execute('SELECT * FROM admins WHERE username = ? AND password = ?', [username, password]);
+        if (admin.length > 0) {
+            await db.end();
+            return res.status(200).json({ status: 'success', role: 'admin', message: 'Welcome Admin' });
         }
 
-        const db = await mysql.createConnection(dbConfig);
-        const [rows] = await db.execute('SELECT * FROM admins WHERE username = ? AND password = ?', [username, password]);
-        await db.end();
-
-        if (rows.length > 0) {
-            res.status(200).json({ status: 'success', message: 'Login berhasil' });
-        } else {
-            res.status(401).json({ status: 'error', message: 'Username atau password salah!' });
-        }
-    } catch (error) {
-        console.error('Error Login:', error);
-        res.status(500).json({ status: 'error', message: 'Terjadi kesalahan pada server.' });
-    }
-});
-
-// ==========================================
-// API 3: READ SEMUA DATA (DASHBOARD)
-// ==========================================
-app.get('/api/complaints', async (req, res) => {
-    try {
-        const db = await mysql.createConnection(dbConfig);
-        const query = `
-            SELECT c.*, cat.category_name 
-            FROM complaints c
-            LEFT JOIN categories cat ON c.category_id = cat.id
-            ORDER BY c.created_at DESC
-        `;
-        const [rows] = await db.execute(query);
-        await db.end();
-
-        res.status(200).json(rows);
-    } catch (error) {
-        console.error('Error Get Data:', error);
-        res.status(500).json({ status: 'error', message: 'Gagal mengambil data dari database.' });
-    }
-});
-
-// ==========================================
-// API 4: UPDATE STATUS
-// ==========================================
-app.patch('/api/complaints/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-
-        const validStatus = ['Menunggu', 'Diproses', 'Selesai'];
-        if (!validStatus.includes(status)) {
-            return res.status(400).json({ status: 'error', message: 'Status tidak dikenali!' });
+        // Kalau bukan admin, cek ke tabel Users
+        const [user] = await db.execute('SELECT * FROM users WHERE email = ? AND password = ?', [username, password]);
+        if (user.length > 0) {
+            await db.end();
+            return res.status(200).json({ 
+                status: 'success', 
+                role: 'user', 
+                nama: user[0].nama,
+                message: 'Login Berhasil' 
+            });
         }
 
-        const db = await mysql.createConnection(dbConfig);
-        await db.execute('UPDATE complaints SET status = ? WHERE id = ?', [status, id]);
         await db.end();
-
-        res.status(200).json({ status: 'success', message: 'Status berhasil diperbarui' });
+        res.status(401).json({ status: 'error', message: 'Akun tidak ditemukan!' });
     } catch (error) {
-        console.error('Error Update Status:', error);
-        res.status(500).json({ status: 'error', message: 'Gagal memperbarui status.' });
+        res.status(500).json({ status: 'error', message: 'Server error' });
     }
 });
 
-// ==========================================
-// API 5: DELETE DATA
-// ==========================================
-app.delete('/api/complaints/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const db = await mysql.createConnection(dbConfig);
-        await db.execute('DELETE FROM complaints WHERE id = ?', [id]);
-        await db.end();
+// ... (Kodingan API complaints, update, delete lu yang lama tetap taruh di bawah sini) ...
 
-        res.status(200).json({ status: 'success', message: 'Data berhasil dihapus' });
-    } catch (error) {
-        console.error('Error Delete Data:', error);
-        res.status(500).json({ status: 'error', message: 'Gagal menghapus data.' });
-    }
-});
-
-// Jalankan Server
 app.listen(port, () => {
-    console.log(`🚀 Server Backend SIMKEL berjalan di http://localhost:${port}`);
+    console.log(`🚀 Server jalan di http://localhost:${port}`);
 });

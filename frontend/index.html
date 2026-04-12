@@ -3,129 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal SIMKEL - Layanan Pengaduan Masyarakat</title>
+    <title>Portal SIMKEL - Layanan Pengaduan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .bg-gradient-soft { background: radial-gradient(circle at top right, #f8fafc, #eff6ff); }
+    </style>
 </head>
-<body class="bg-slate-50 font-sans text-gray-800">
+<body class="bg-gradient-soft font-sans text-gray-800 min-h-screen">
 
-    <nav class="bg-white shadow-sm fixed w-full z-50 top-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center gap-2">
-                    <div class="bg-blue-600 text-white p-2 rounded-lg">
-                        <i class="fas fa-bullhorn text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-black text-blue-600 tracking-tighter leading-none">SIM<span class="text-gray-900">KEL</span></h1>
-                        <p class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Layanan Pengaduan</p>
-                    </div>
+    <nav class="glass-effect shadow-sm fixed w-full z-50 top-0 border-b border-white/50">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-2xl shadow-lg shadow-blue-200 rotate-3">
+                    <i class="fas fa-bullhorn text-xl"></i>
                 </div>
-                
-                <div>
-                    <a href="login.html" class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg transition transform hover:-translate-y-0.5">
-                        <i class="fas fa-user-shield"></i> Portal Admin
-                    </a>
-                </div>
+                <h1 class="text-2xl font-black tracking-tighter text-blue-600">SIM<span class="text-gray-900">KEL</span></h1>
+            </div>
+            
+            <div id="navAction">
+                <a href="login.html" class="bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-xl hover:bg-blue-600 transition-all active:scale-95">
+                    <i class="fas fa-user-shield"></i> Portal Admin
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 flex flex-col lg:flex-row gap-12 items-center min-h-screen">
-        
-        <div class="w-full lg:w-1/2 space-y-8">
-            <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-                Suara Anda, Perubahan Kita
-            </div>
-            <h2 class="text-4xl lg:text-5xl font-black text-gray-900 leading-tight">
-                Layanan Aspirasi dan Pengaduan <span class="text-blue-600">Online.</span>
-            </h2>
-            <p class="text-lg text-gray-600 leading-relaxed">
-                Sampaikan laporan, keluhan, atau aspirasi Anda langsung kepada kami. Kami menjamin kerahasiaan data Anda dan memastikan setiap laporan diproses dengan cepat.
-            </p>
+    <main class="max-w-7xl mx-auto px-4 pt-32 pb-12">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-200">
-                <div class="space-y-2">
-                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-blue-600 shadow border border-gray-100 font-bold">1</div>
-                    <h4 class="font-bold text-gray-900">Tulis Laporan</h4>
-                    <p class="text-xs text-gray-500">Isi form keluhan dengan data yang valid.</p>
+            <div class="w-full lg:w-5/12 space-y-8" id="leftSection">
+                <div id="guestText">
+                    <span class="px-4 py-1.5 bg-blue-100 text-blue-600 text-[10px] font-black uppercase rounded-full tracking-widest">Suaramu Berharga</span>
+                    <h2 class="text-6xl font-black text-gray-900 leading-[1.1] mt-4">Layanan Aspirasi <span class="text-blue-600 underline decoration-blue-200">Online.</span></h2>
+                    <p class="text-lg text-gray-500 font-medium mt-6 leading-relaxed">Sampaikan keluhan fasilitas atau pelayanan kampus dengan aman. Kerahasiaan data mahasiswa adalah prioritas kami.</p>
                 </div>
-                <div class="space-y-2">
-                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-yellow-500 shadow border border-gray-100 font-bold">2</div>
-                    <h4 class="font-bold text-gray-900">Proses</h4>
-                    <p class="text-xs text-gray-500">Laporan Anda akan diverifikasi & ditindaklanjuti.</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-500 shadow border border-gray-100 font-bold">3</div>
-                    <h4 class="font-bold text-gray-900">Selesai</h4>
-                    <p class="text-xs text-gray-500">Tindakan selesai dan layanan dievaluasi.</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="w-full lg:w-1/2">
-            <div class="bg-white p-8 lg:p-10 rounded-3xl shadow-2xl border border-gray-100 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10"></div>
-                
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <i class="fas fa-edit text-blue-500"></i> Buat Laporan Baru
-                </h3>
-                
-                <form id="formKeluhan" class="space-y-5">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Nama Lengkap</label>
-                        <input type="text" id="nama" placeholder="Masukkan nama Anda" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">
+                <div id="userGuide" class="hidden space-y-8">
+                    <div class="space-y-2">
+                        <h2 class="text-4xl font-black text-gray-900 leading-tight">Halo, <br><span class="text-blue-600" id="displayNama">Mahasiswa</span>!</h2>
+                        <p class="text-gray-500 font-medium">Laporanmu membantu kami menciptakan lingkungan kampus yang lebih baik.</p>
                     </div>
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Alamat Email</label>
-                        <input type="email" id="email" placeholder="contoh@email.com" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Kategori Keluhan</label>
-                        <div class="relative">
-                            <select id="kategori" class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition appearance-none text-sm cursor-pointer">
-                                <option value="" disabled selected>-- Pilih Kategori --</option>
-                                <option value="1">Fasilitas</option>
-                                <option value="2">Pelayanan</option>
-                                <option value="3">Teknis</option>
-                            </select>
-                            <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-400 text-sm pointer-events-none"></i>
+
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-100/50 border border-white space-y-6">
+                        <h4 class="font-black text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-tasks text-blue-600"></i> Alur Penanganan
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex gap-4 group">
+                                <div class="flex-none w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-blue-600 group-hover:text-white transition">1</div>
+                                <p class="text-sm text-gray-600 font-medium">Isi formulir pengaduan dengan detail dan lampirkan info yang jelas.</p>
+                            </div>
+                            <div class="flex gap-4 group">
+                                <div class="flex-none w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-blue-600 group-hover:text-white transition">2</div>
+                                <p class="text-sm text-gray-600 font-medium">Admin akan memverifikasi laporanmu dalam waktu maksimal 2x24 jam.</p>
+                            </div>
+                            <div class="flex gap-4 group">
+                                <div class="flex-none w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-blue-600 group-hover:text-white transition">3</div>
+                                <p class="text-sm text-gray-600 font-medium">Status laporan dapat dipantau melalui dashboard atau notifikasi email.</p>
+                            </div>
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Isi Laporan / Pesan</label>
-                        <textarea id="pesan" rows="4" placeholder="Ceritakan kronologi keluhan Anda dengan jelas..." class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition resize-none text-sm"></textarea>
+                    <div class="p-6 bg-blue-600 rounded-[2rem] text-white shadow-lg shadow-blue-200 flex items-center gap-4">
+                        <i class="fas fa-shield-alt text-2xl opacity-50"></i>
+                        <p class="text-xs font-medium leading-relaxed">Seluruh data laporan yang dikirimkan terenkripsi secara aman dalam sistem kami.</p>
                     </div>
-                    
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-200 transition transform hover:-translate-y-1 flex justify-center items-center gap-2">
-                        <i class="fas fa-paper-plane"></i> Kirim Laporan Sekarang
-                    </button>
-                </form>
+                </div>
+
+                <div class="flex gap-4 p-6 bg-white/50 rounded-[2.5rem] border border-white inline-flex shadow-sm">
+                    <div class="text-center group"><div class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center mx-auto font-black mb-2 shadow-lg shadow-blue-100 transition group-hover:rotate-12">1</div><p class="text-[10px] font-black uppercase text-gray-400">Lapor</p></div>
+                    <div class="text-center group"><div class="bg-yellow-400 text-white w-12 h-12 rounded-2xl flex items-center justify-center mx-auto font-black mb-2 shadow-lg shadow-yellow-100 transition group-hover:rotate-12">2</div><p class="text-[10px] font-black uppercase text-gray-400">Proses</p></div>
+                    <div class="text-center group"><div class="bg-green-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center mx-auto font-black mb-2 shadow-lg shadow-green-100 transition group-hover:rotate-12">3</div><p class="text-[10px] font-black uppercase text-gray-400">Selesai</p></div>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-7/12" id="mainCardContainer">
+                <div id="guestView" class="bg-white p-12 rounded-[3rem] shadow-2xl shadow-blue-100/50 text-center space-y-8 border border-white relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
+                    <div class="w-24 h-24 bg-blue-50 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto text-4xl rotate-6">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-black text-gray-900 tracking-tight">Belum Masuk?</h3>
+                        <p class="text-gray-500 font-medium mt-2">Masuk dengan akun mahasiswa untuk membuat laporan baru.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="login-user.html" class="flex-1 bg-blue-600 text-white py-5 rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 text-center">Masuk Sekarang</a>
+                        <a href="register.html" class="flex-1 bg-white text-blue-600 border-2 border-blue-600 py-5 rounded-2xl font-black text-lg hover:bg-blue-50 transition-all active:scale-95 text-center">Daftar Akun</a>
+                    </div>
+                </div>
+
+                <div id="userView" class="hidden bg-white p-10 rounded-[3rem] shadow-2xl shadow-blue-100/50 border border-white relative">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-2xl font-black text-gray-900 flex items-center gap-3">
+                            <span class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center text-sm"><i class="fas fa-pen"></i></span>
+                            Buat Laporan Baru
+                        </h3>
+                        <span class="text-[10px] font-bold bg-green-100 text-green-600 px-3 py-1 rounded-full uppercase tracking-tighter">Sistem Terhubung</span>
+                    </div>
+
+                    <form id="formKeluhan" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-blue-600 uppercase ml-1 tracking-widest">Nama Pelapor</label>
+                                <input type="text" id="nama" readonly class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl font-bold text-gray-400 cursor-not-allowed">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-blue-600 uppercase ml-1 tracking-widest">Email Mahasiswa</label>
+                                <input type="email" id="email" readonly class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl font-bold text-gray-400 cursor-not-allowed">
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-blue-600 uppercase ml-1 tracking-widest">Kategori Laporan</label>
+                            <select id="kategori" required class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl font-bold text-gray-800 focus:border-blue-500 focus:bg-white transition outline-none appearance-none cursor-pointer">
+                                <option value="" disabled selected>Pilih Kategori Permasalahan</option>
+                                <option value="1">Sarana & Prasarana Kampus</option>
+                                <option value="2">Pelayanan Akademik</option>
+                                <option value="3">Masalah Teknis & IT</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-blue-600 uppercase ml-1 tracking-widest">Deskripsi Masalah</label>
+                            <textarea id="pesan" rows="5" required class="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl font-medium text-gray-800 focus:border-blue-500 focus:bg-white transition outline-none resize-none" placeholder="Tuliskan secara detail mengenai keluhan Anda..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 text-white py-5 rounded-[2rem] font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all transform hover:-translate-y-1 active:scale-95">
+                            Kirim Aduan Sekarang <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-
     </main>
 
-    <footer class="bg-white border-t border-gray-200 py-6 text-center text-sm text-gray-500">
-        <p>&copy; PEMOGRAMAN FULLSTACK</p>
-    </footer>
-
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isUser = localStorage.getItem('isUser');
+            const userNama = localStorage.getItem('userNama');
+            const userEmail = localStorage.getItem('userEmail');
+
+            if (isUser === 'true') {
+                // Sembunyikan Landing Guest, Munculkan Dashboard User
+                document.getElementById('guestText').classList.add('hidden');
+                document.getElementById('userGuide').classList.remove('hidden');
+
+                document.getElementById('guestView').classList.add('hidden');
+                document.getElementById('userView').classList.remove('hidden');
+                
+                // Isi identitas & salam
+                document.getElementById('nama').value = userNama;
+                document.getElementById('email').value = userEmail;
+                document.getElementById('displayNama').innerText = userNama;
+
+                // Navbar: Ganti tombol Login jadi Profile & Logout
+                document.getElementById('navAction').innerHTML = `
+                    <div class="flex items-center gap-5">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-[9px] text-blue-600 font-black uppercase tracking-widest">User Aktif</p>
+                            <p class="text-sm font-black text-gray-900">${userNama}</p>
+                        </div>
+                        <button onclick="logout()" class="bg-red-50 text-red-600 w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+                `;
+            }
+        });
+
+        function logout() {
+            Swal.fire({
+                title: 'Ingin Logout?',
+                text: "Sesi pelaporan Anda akan berakhir.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                confirmButtonText: 'Ya, Keluar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            });
+        }
+
         document.getElementById('formKeluhan').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+            Swal.fire({ title: 'Menyimpan Laporan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
             const data = {
                 customer_name: document.getElementById('nama').value,
                 customer_email: document.getElementById('email').value,
                 category_id: document.getElementById('kategori').value,
                 message: document.getElementById('pesan').value
             };
-
-            Swal.fire({ title: 'Memproses Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
                 const res = await fetch('http://localhost:3000/api/complaints', {
@@ -134,21 +209,14 @@
                     body: JSON.stringify(data)
                 });
                 
-                const result = await res.json();
-
                 if (res.ok) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Laporan Terkirim!',
-                        text: 'Terima kasih atas masukan Anda. Kami akan segera menindaklanjutinya.',
-                        confirmButtonColor: '#2563eb'
-                    });
-                    e.target.reset(); 
+                    Swal.fire({ icon: 'success', title: 'Terkirim!', text: 'Laporan Anda sudah masuk ke sistem kami.', timer: 2000, showConfirmButton: false });
+                    document.getElementById('pesan').value = '';
                 } else {
-                    Swal.fire('Perhatian!', result.message, 'warning'); 
+                    Swal.fire('Error', 'Gagal mengirim laporan. Pastikan API Server menyala.', 'error');
                 }
-            } catch (error) {
-                Swal.fire('Server Error', 'Gagal terhubung ke sistem. Pastikan server aktif.', 'error');
+            } catch (err) {
+                Swal.fire('Koneksi Gagal', 'Server tidak merespon (Localhost:3000).', 'error');
             }
         });
     </script>
