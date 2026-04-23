@@ -1,1 +1,4 @@
-node_modules/
+.env 
+db_keluhan_pelanggan.sql 
+.DS_Store 
+node_modules/ 
