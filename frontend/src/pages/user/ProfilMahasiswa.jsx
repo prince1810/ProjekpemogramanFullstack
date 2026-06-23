@@ -9,13 +9,18 @@ export const ProfilMahasiswa = () => {
   const [complaints, setComplaints] = useState([]);
   const [passData, setPassData] = useState({ oldPassword: "", newPassword: "" });
   
+<<<<<<< HEAD
   // Mengambil ID dari localStorage
   const userId = localStorage.getItem("userId");
+=======
+  const userId = localStorage.getItem("userId") || 1; 
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
 
   const [studentData, setStudentData] = useState({
     nama: "", email: "", nim: "", jurusan: "", avatar: null
   });
 
+<<<<<<< HEAD
   useEffect(() => { 
     // Perbaikan: Hanya panggil fetchData jika userId ada dan bukan "undefined" atau "0"
     if (userId && userId !== "undefined" && userId !== "0" && userId !== null) {
@@ -26,10 +31,14 @@ export const ProfilMahasiswa = () => {
       console.log("UserID tidak valid, menunggu data...");
     }
   }, []);
+=======
+  useEffect(() => { fetchData(); }, []);
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
 
   const fetchData = async () => {
     try {
       setLoading(true);
+<<<<<<< HEAD
       // Pastikan URL backend sesuai dan userId tidak null
       const resProfile = await axios.get(`http://localhost:3000/api/user/profile/${userId}`);
       setStudentData(resProfile.data);
@@ -40,11 +49,21 @@ export const ProfilMahasiswa = () => {
       console.error(err); 
       Swal.fire("Error", "Gagal memuat data profil. Pastikan Anda sudah login dengan benar.", "error");
     } finally { setLoading(false); }
+=======
+      const resProfile = await axios.get(`http://localhost:3000/api/user/profile/${userId}`);
+      setStudentData(resProfile.data);
+      const resComplaints = await axios.get(`http://localhost:3000/api/user/complaints/${userId}`);
+      setComplaints(resComplaints.data);
+    } catch (err) { console.error(err); } finally { setLoading(false); }
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
   };
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!userId) return;
+=======
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
     try {
       await axios.put(`http://localhost:3000/api/user/profile/${userId}`, studentData);
       Swal.fire({ icon: "success", title: "Berhasil!", text: "Profil diperbarui." });
@@ -54,7 +73,10 @@ export const ProfilMahasiswa = () => {
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!userId) return;
+=======
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
     try {
       await axios.put(`http://localhost:3000/api/user/password/${userId}`, passData);
       Swal.fire({ icon: "success", title: "Sukses!", text: "Password diperbarui." });
@@ -105,7 +127,11 @@ export const ProfilMahasiswa = () => {
             <form onSubmit={handleSaveProfile} className="relative mt-12 space-y-6">
                 <div className="flex flex-col items-center">
                     <div className="relative group">
+<<<<<<< HEAD
                         <img src={studentData.avatar || `https://ui-avatars.com/api/?name=${studentData.nama || 'User'}&background=001f54&color=fff`} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" />
+=======
+                        <img src={studentData.avatar || `https://ui-avatars.com/api/?name=${studentData.nama}&background=001f54&color=fff`} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" />
+>>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
                         <button type="button" onClick={handleUploadPhoto} className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md text-blue-600"><Upload size={16}/></button>
                     </div>
                 </div>
