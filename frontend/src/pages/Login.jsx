@@ -64,6 +64,7 @@ const Login = () => {
                 localStorage.setItem("userEmail", loginData.user);
                 localStorage.setItem("role", data.role);
                 localStorage.setItem("userId", data.id); 
+                localStorage.setItem("userName", data.nama);
                 
                 setTimeout(() => {
                     data.role === 'admin' ? navigate('/dashboard-admin') : navigate('/dashboard-mahasiswa');
