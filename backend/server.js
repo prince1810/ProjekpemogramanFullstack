@@ -3,9 +3,11 @@ const mysql = require("mysql2/promise");
 const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
+const { OAuth2Client } = require("google-auth-library"); // DITAMBAHKAN
 
 const app = express();
 const port = 3000;
+const client = new OAuth2Client("YOUR_GOOGLE_CLIENT_ID_HERE"); // DITAMBAHKAN (Ganti dengan Client ID Anda)
 
 // Konfigurasi limit untuk menangani upload foto/data besar
 app.use(express.json({ limit: '10mb' }));
@@ -55,6 +57,36 @@ app.post("/api/auth-login", async (req, res) => {
     res.status(401).json({ message: "Username/Password salah!" });
   } catch (error) {
     res.status(500).json({ message: "Database error." });
+  }
+});
+
+// Endpoint baru untuk verifikasi Google
+app.post("/api/auth/google", async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: "YOUR_GOOGLE_CLIENT_ID_HERE", // Ganti dengan Client ID Anda
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+
+    // Cari user di database berdasarkan email dari Google
+    const [userRows] = await pool.execute(`SELECT * FROM users WHERE email = ?`, [email]);
+
+    if (userRows.length > 0) {
+      return res.status(200).json({ 
+        role: 'user', 
+        nama: userRows[0].nama, 
+        email: userRows[0].email, 
+        message: "Login Google berhasil" 
+      });
+    } else {
+      return res.status(401).json({ message: "Email tidak terdaftar di sistem" });
+    }
+  } catch (error) {
+    console.error("GOOGLE AUTH ERROR:", error);
+    res.status(500).json({ message: "Gagal verifikasi Google Token" });
   }
 });
 
@@ -188,7 +220,7 @@ app.delete("/api/categories/:id", async (req, res) => {
   try {
     await logActivity("DELETE_CATEGORY", "categories", req.params.id);
     await pool.execute("DELETE FROM categories WHERE id = ?", [req.params.id]);
-    res.status(200).json({ message: "Kategori berhasil dihapus" });
+    res.status(200).json({ message: "Kategori berhasil dihapus. Pastikan tidak ada keluhan yang memakai kategori ini." });
   } catch (error) {
     res.status(500).json({ message: "Gagal menghapus kategori. Pastikan tidak ada keluhan yang memakai kategori ini." });
   }

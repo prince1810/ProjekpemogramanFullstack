@@ -7,11 +7,16 @@ import DashboardMain from "./admin/DashboardMain";
 import KelolaKeluhan from "./admin/KelolaKeluhan"; 
 import { KelolaPengguna, KategoriKeluhan } from "./admin/ManajemenData";
 import { Pengumuman, Pengaturan } from "./admin/KomunikasiKontrol";
-import { ProfilAdmin } from "./admin/ProfilAdmin"; // <-- IMPORT PROFIL ADMIN BARU
+import { ProfilAdmin } from "./admin/ProfilAdmin"; 
 
 const DashboardAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   const menu = [
     { name: "Dashboard", icon: <LayoutDashboard size={20}/>, path: "/dashboard-admin" },
@@ -54,7 +59,7 @@ const DashboardAdmin = () => {
             <User size={20}/> Profil Saya
           </button>
           <button 
-            onClick={() => {localStorage.clear(); navigate("/login")}} 
+            onClick={handleLogout} 
             className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-red-600 transition"
           >
             <LogOut size={20}/> Keluar

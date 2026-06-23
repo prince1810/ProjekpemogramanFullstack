@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, EyeOff, Eye, ShieldCheck, MessageCircle, Zap } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 // === Komponen Vektor ===
 const EAdvocacyLogoSvg = () => (
@@ -9,15 +10,6 @@ const EAdvocacyLogoSvg = () => (
         <path d="M20 5.25L13.5 12.75V27.25L20 34.75L26.5 27.25V12.75L20 5.25Z" stroke="#003580" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M20 12L15 16V24L20 28L25 24V16L20 12Z" fill="#003580" fillOpacity="0.2"/>
         <circle cx="20" cy="20" r="3" fill="#003580"/>
-    </svg>
-);
-
-const GoogleIconSvg = () => (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19.6 10.2273C19.6 9.51818 19.5364 8.83636 19.4182 8.18182H10V12.0545H15.3818C15.15 13.3 14.4455 14.3545 13.3818 15.0636V17.5727H16.6182C18.5091 15.8364 19.6 13.2727 19.6 10.2273Z" fill="#4285F4"/>
-        <path d="M10 20C12.7 20 14.9636 19.1091 16.6182 17.5727C18.2727 16.0364 19.1636 13.8818 19.1636 11.2364C19.1636 10.2 19.0818 9.21818 18.9182 8.18182H10V12.0545H15.3818C15.15 13.3 14.4455 14.3545 13.3818 15.0636C12.4455 15.7 11.2818 16.0364 10 16.0364C7.5 16.0364 5.37273 14.3545 4.61818 12.0545H1.26364V14.6182C2.92727 17.9 6.2 20 10 20Z" fill="#34A853"/>
-        <path d="M4.61818 12.0545C4.38182 11.2273 4.25455 10.3545 4.25455 9.45455C4.25455 8.55455 4.38182 7.68182 4.61818 6.85455V4.29091H1.26364C0.463636 5.86364 0 7.60909 0 9.45455C0 11.3 0.463636 13.0455 1.26364 14.6182L4.61818 12.0545Z" fill="#FBBC05"/>
-        <path d="M10 3.96364C11.2 3.96364 12.2727 4.35455 13.1273 5.14545L15.9364 2.33636C14.2818 0.881818 12.1818 0 10 0C6.2 0 2.92727 2.1 1.26364 5.38182L4.61818 7.94545C5.37273 5.64545 7.5 3.96364 10 3.96364Z" fill="#EA4335"/>
     </svg>
 );
 
@@ -113,13 +105,49 @@ const Login = () => {
                             <button type="submit" className="w-full bg-blue-600 text-white text-sm font-semibold py-2.5 rounded-lg hover:bg-blue-700">Masuk</button>
                         </form>
                         <div className="relative flex py-2 items-center"><div className="flex-grow border-t border-gray-200"></div><span className="flex-shrink mx-4 text-xs text-gray-400">atau</span><div className="flex-grow border-t border-gray-200"></div></div>
-                        <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-50 shadow-sm">
-                            <GoogleIconSvg /> Masuk dengan Google
-                        </button>
+                        
+                        {/* Tombol Google Login Terintegrasi */}
+                        <div className="w-full flex justify-center">
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    try {
+                                        const res = await fetch("http://localhost:3000/api/auth/google", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ token: credentialResponse.credential }),
+                                        });
+
+                                        const data = await res.json();
+
+                                        if (res.ok) {
+                                            localStorage.setItem("role", data.role);
+                                            localStorage.setItem("userEmail", data.email);
+                                            
+                                            // Arahkan ke dashboard sesuai role
+                                            if (data.role === 'admin') {
+                                                navigate('/dashboard-admin');
+                                            } else {
+                                                navigate('/dashboard-mahasiswa');
+                                            }
+                                        } else {
+                                            alert(data.message || "Gagal login dengan Google");
+                                        }
+                                    } catch (error) {
+                                        console.error("Login Error:", error);
+                                        alert("Terjadi kesalahan pada server");
+                                    }
+                                }}
+                                onError={() => alert('Login Gagal')}
+                                theme="outline"
+                                size="large"
+                                width="320"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
+
 export default Login;

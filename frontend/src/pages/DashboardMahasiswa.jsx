@@ -3,7 +3,6 @@ import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { LayoutDashboard, PlusCircle, ClipboardList, Bell, User, Book, LogOut, FileText } from "lucide-react";
 
 // --- IMPORT KOMPONEN PROFIL MAHASISWA ---
-// Pastikan file ProfilMahasiswa.jsx berada di dalam folder "user"
 import { ProfilMahasiswa } from "./user/ProfilMahasiswa"; 
 
 // Komponen placeholder agar halaman tidak kosong saat diklik
@@ -12,6 +11,11 @@ const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-7
 const DashboardMahasiswa = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Digunakan untuk mendeteksi rute yang aktif
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   const menu = [
     { name: "Dashboard", icon: <LayoutDashboard size={20}/>, path: "/dashboard-mahasiswa" },
@@ -45,7 +49,7 @@ const DashboardMahasiswa = () => {
         {/* Tombol Keluar di Bawah */}
         <div className="mt-10 border-t border-blue-800 pt-4">
           <button 
-            onClick={() => {localStorage.clear(); navigate("/login")}} 
+            onClick={handleLogout} 
             className="flex items-center gap-3 w-full p-3 hover:bg-red-600 rounded-lg transition"
           >
             <LogOut size={20}/> Keluar
