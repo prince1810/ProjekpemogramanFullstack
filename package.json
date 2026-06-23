@@ -1,9 +1,12 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "dependencies": {
     "react-router-dom": "^7.18.0",
     "sweetalert2": "^11.26.25"
 =======
+=======
+>>>>>>> 55cb820bb26872efc25eda73ce72df3443e1bad6
   "name": "frontend-react",
   "private": true,
   "version": "0.0.0",
@@ -30,6 +33,9 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
     "vite": "^8.0.12"
+<<<<<<< HEAD
 >>>>>>> 9270ad393ec9992c1e8da56c17be5e48f4f159d2
+=======
+>>>>>>> 55cb820bb26872efc25eda73ce72df3443e1bad6
   }
 }
