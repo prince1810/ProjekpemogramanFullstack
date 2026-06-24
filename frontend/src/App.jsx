@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
+import { ProtectedRoute } from './components/routes/ProtectedRoute'; // Import Satpam
 import Login from './pages/Login';
 import DashboardAdmin from './pages/DashboardAdmin';
 import DashboardMahasiswa from './pages/DashboardMahasiswa';
-import Register from './pages/Register'; // Memanggil komponen Register baru
+import Register from './pages/Register';
 
 function App() {
+  const { user } = useContext(AuthContext);
+
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Rute Publik */}
+        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+        <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+
+        {/* Rute Terproteksi (Dibungkus Satpam/ProtectedRoute) */}
+        <Route 
+          path="/dashboard-admin/*" 
+          element={
+            <ProtectedRoute>
+              <DashboardAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard-mahasiswa/*" 
+          element={
+            <ProtectedRoute>
+              <DashboardMahasiswa />
+            </ProtectedRoute>
+          } 
+        />
         
-        {/* Tanda /* agar navigasi sub-menu sidebar di dalam dashboard bekerja */}
-        <Route path="/dashboard-admin/*" element={<DashboardAdmin />} />
-        <Route path="/dashboard-mahasiswa/*" element={<DashboardMahasiswa />} />
-        
-        {/* Otomatis mengarahkan ke halaman login jika akses url utama (/) */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        {/* Redirect Utama */}
+        <Route 
+          path="/" 
+          element={user ? <Navigate to="/dashboard-mahasiswa" /> : <Navigate to="/login" />} 
+        />
       </Routes>
     </Router>
   );

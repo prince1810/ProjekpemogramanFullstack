@@ -1,14 +1,16 @@
-import React from "react";
+// src/pages/DashboardMahasiswa.jsx
+import React, { useContext } from "react"; // Ditambahkan useContext
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { LayoutDashboard, PlusCircle, ClipboardList, Bell, User, Book, LogOut, FileText } from "lucide-react";
 import { ProfilMahasiswa } from "./user/ProfilMahasiswa";
 import { BuatKeluhan } from "./user/BuatKeluhan";
-
+import { AuthContext } from "../context/AuthContext";
 const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-700">Halaman {title}</h2>;
 
 const DashboardMahasiswa = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useContext(AuthContext); // Ditambahkan hook untuk logout
 
   const menu = [
     { name: "Dashboard", icon: <LayoutDashboard size={20}/>, path: "/dashboard-mahasiswa" },
@@ -38,7 +40,10 @@ const DashboardMahasiswa = () => {
         </nav>
         <div className="mt-10 border-t border-blue-800 pt-4">
           <button
-            onClick={() => { localStorage.clear(); navigate("/login"); }}
+            onClick={() => { 
+                logout(); 
+                window.location.href = "/login"; 
+            }}
             className="flex items-center gap-3 w-full p-3 hover:bg-red-600 rounded-lg transition"
           >
             <LogOut size={20}/> Keluar

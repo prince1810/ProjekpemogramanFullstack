@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Tambahkan useContext di sini
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, User, EyeOff, Eye, ShieldCheck, MessageCircle, Zap } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext'; // Pastikan path-nya benar
 // --- IMPORT UNTUK GOOGLE LOGIN ---
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
@@ -42,10 +43,25 @@ const Login = () => {
     const navigate = useNavigate();
     const [loginData, setLoginData] = useState({ user: '', pass: '' });
     const [showPass, setShowPass] = useState(false);
+    
+    // --- FITUR BARU: State Ingat Saya ---
+    const [rememberMe, setRememberMe] = useState(false);
+
+    // --- FITUR BARU: Load data dari Local Storage saat komponen dimount ---
+    useEffect(() => {
+        const savedUser = localStorage.getItem('simkel_remembered_user');
+        if (savedUser) {
+            setLoginData((prev) => ({ ...prev, user: savedUser }));
+            setRememberMe(true);
+        }
+    }, []);
 
     // Fungsi Login Manual
+   const { setUser } = useContext(AuthContext); // Tambahkan ini di dalam komponen
+
     const handleLogin = async (e) => {
         e.preventDefault();
+
         try {
             const res = await fetch('http://localhost:3000/api/auth-login', {
                 method: 'POST',
@@ -55,11 +71,21 @@ const Login = () => {
             const data = await res.json();
             
             if (res.ok) {
-                localStorage.setItem("userEmail", loginData.user);
-                localStorage.setItem("role", data.role);
-                localStorage.setItem("userId", data.id); 
-                localStorage.setItem("userName", data.nama);
+                // 1. Buat satu objek user yang lengkap
+                const userObj = {
+                    email: loginData.user,
+                    role: data.role,
+                    id: data.id,
+                    nama: data.nama
+                };
+
+                // 2. Simpan ke localStorage dengan kunci "user" (AGAR AUTHCONTEXT BISA BACA)
+                localStorage.setItem("user", JSON.stringify(userObj));
                 
+                // 3. Update state di Context agar aplikasi tahu user sudah login secara realtime
+                setUser(userObj);
+                
+                // 4. Navigasi
                 setTimeout(() => {
                     data.role === 'admin' ? navigate('/dashboard-admin') : navigate('/dashboard-mahasiswa');
                 }, 100);
@@ -68,6 +94,18 @@ const Login = () => {
             }
         } catch (err) {
             alert("Server tidak merespon!");
+        }
+    };
+
+    // --- FITUR BARU: Fungsi Lupa Password ---
+    const handleForgotPassword = (e) => {
+        e.preventDefault();
+        // Menggunakan prompt bawaan browser agar tidak perlu install package tambahan
+        const email = window.prompt("Lupa Password?\nMasukkan alamat email atau NIM Anda untuk mereset password:");
+        
+        if (email) {
+            // Logika fetch API reset password bisa ditaruh di sini nanti
+            window.alert(`Terkirim!\nLink reset password telah dikirim ke ${email}.\nSilakan cek kotak masuk Anda.`);
         }
     };
 
@@ -120,18 +158,38 @@ const Login = () => {
                             <form onSubmit={handleLogin} className="flex flex-col gap-4">
                                 <div className="relative">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                    <input type="text" placeholder="Masukkan email atau NIM Anda" className="w-full px-10 py-2.5 text-sm border border-gray-200 rounded-lg" onChange={(e) => setLoginData({...loginData, user: e.target.value})} />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Masukkan email atau NIM Anda" 
+                                        className="w-full px-10 py-2.5 text-sm border border-gray-200 rounded-lg" 
+                                        value={loginData.user} // --- UPDATE DI SINI ---
+                                        onChange={(e) => setLoginData({...loginData, user: e.target.value})} 
+                                    />
                                 </div>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                    <input type={showPass ? "text" : "password"} placeholder="Masukkan password Anda" className="w-full px-10 py-2.5 text-sm border border-gray-200 rounded-lg" onChange={(e) => setLoginData({...loginData, pass: e.target.value})} />
+                                    <input 
+                                        type={showPass ? "text" : "password"} 
+                                        placeholder="Masukkan password Anda" 
+                                        className="w-full px-10 py-2.5 text-sm border border-gray-200 rounded-lg" 
+                                        value={loginData.pass} // --- UPDATE DI SINI ---
+                                        onChange={(e) => setLoginData({...loginData, pass: e.target.value})} 
+                                    />
                                     <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                         {showPass ? <Eye size={16} /> : <EyeOff size={16} />}
                                     </button>
                                 </div>
                                 <div className="flex items-center justify-between text-xs text-gray-700">
-                                    <label className="flex items-center gap-2"><input type="checkbox" /> Ingat saya</label>
-                                    <a href="#" className="font-medium text-blue-600 hover:underline">Lupa password?</a>
+                                    <label className="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={rememberMe} // --- UPDATE DI SINI ---
+                                            onChange={(e) => setRememberMe(e.target.checked)} // --- UPDATE DI SINI ---
+                                        /> Ingat saya
+                                    </label>
+                                    <a href="#" onClick={handleForgotPassword} className="font-medium text-blue-600 hover:underline">
+                                        Lupa password?
+                                    </a>
                                 </div>
                                 <button type="submit" className="w-full bg-blue-600 text-white text-sm font-semibold py-2.5 rounded-lg hover:bg-blue-700">Masuk</button>
                             </form>

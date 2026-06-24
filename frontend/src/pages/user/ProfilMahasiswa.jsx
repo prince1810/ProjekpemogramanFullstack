@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { User, FileText, Upload, Key, ShieldCheck } from "lucide-react";
+import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 
 export const ProfilMahasiswa = () => {
+  const { updateUser } = useContext(AuthContext); // Mengambil fungsi updateUser dari context
   const [activeTab, setActiveTab] = useState("profil");
   const [loading, setLoading] = useState(true);
   const [complaints, setComplaints] = useState([]);
@@ -44,6 +46,10 @@ export const ProfilMahasiswa = () => {
     if (!userId) return;
     try {
       await axios.put(`http://localhost:3000/api/user/profile/${userId}`, studentData);
+      
+      // Sinkronisasi ke Context agar semua halaman lain otomatis ter-update
+      updateUser({ nama: studentData.nama });
+
       Swal.fire({ icon: "success", title: "Berhasil!", text: "Profil diperbarui." });
       fetchData();
     } catch (err) { Swal.fire("Error", "Gagal menyimpan", "error"); }

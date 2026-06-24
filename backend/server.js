@@ -46,11 +46,15 @@ async function logActivity(action, tableName, recordId) {
 app.post("/api/auth-login", async (req, res) => {
   try {
     const { user, pass } = req.body;
-    const [adminRows] = await pool.execute(`SELECT * FROM admins WHERE username = ? AND password = ?`, [user, pass]);
+    
+    // [UPDATE]: Menambahkan "BINARY" sebelum password agar case-sensitive
+    const [adminRows] = await pool.execute(`SELECT * FROM admins WHERE username = ? AND BINARY password = ?`, [user, pass]);
     if (adminRows.length > 0) return res.status(200).json({ role: 'admin', message: "Login Admin berhasil" });
 
-    const [userRows] = await pool.execute(`SELECT * FROM users WHERE email = ? AND password = ?`, [user, pass]);
+    // [UPDATE]: Menambahkan "BINARY" sebelum password agar case-sensitive
+    const [userRows] = await pool.execute(`SELECT * FROM users WHERE email = ? AND BINARY password = ?`, [user, pass]);
     if (userRows.length > 0) return res.status(200).json({ role: 'user', id: userRows[0].id, nama: userRows[0].nama, email: userRows[0].email, message: "Login User berhasil" });
+    
     res.status(401).json({ message: "Username/Password salah!" });
   } catch (error) {
     res.status(500).json({ message: "Database error." });

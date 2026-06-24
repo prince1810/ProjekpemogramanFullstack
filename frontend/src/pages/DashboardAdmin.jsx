@@ -1,17 +1,19 @@
-import React from "react";
+// src/pages/DashboardAdmin.jsx
+import React, { useContext } from "react";
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { LayoutDashboard, ClipboardList, Users, FileText, Settings, Megaphone, LogOut, User } from "lucide-react";
-
+import { AuthContext } from "../context/AuthContext";
 // --- IMPORT DARI FOLDER ADMIN ---
 import DashboardMain from "./admin/DashboardMain";
 import KelolaKeluhan from "./admin/KelolaKeluhan"; 
 import { KelolaPengguna, KategoriKeluhan } from "./admin/ManajemenData";
 import { Pengumuman, Pengaturan } from "./admin/KomunikasiKontrol";
-import { ProfilAdmin } from "./admin/ProfilAdmin"; // <-- IMPORT PROFIL ADMIN BARU
+import { ProfilAdmin } from "./admin/ProfilAdmin"; 
 
 const DashboardAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useContext(AuthContext); // Ditambahkan hook untuk logout
 
   const menu = [
     { name: "Dashboard", icon: <LayoutDashboard size={20}/>, path: "/dashboard-admin" },
@@ -54,7 +56,10 @@ const DashboardAdmin = () => {
             <User size={20}/> Profil Saya
           </button>
           <button 
-            onClick={() => {localStorage.clear(); navigate("/login")}} 
+            onClick={() => { 
+                logout(); 
+                window.location.href = "/login"; 
+            }} 
             className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-red-600 transition"
           >
             <LogOut size={20}/> Keluar
@@ -72,7 +77,7 @@ const DashboardAdmin = () => {
             <Route path="kategori" element={<KategoriKeluhan />} />
             <Route path="pengumuman" element={<Pengumuman />} />
             <Route path="pengaturan" element={<Pengaturan />} />
-            <Route path="profil" element={<ProfilAdmin />} /> {/* <-- RUTE PROFIL BARU */}
+            <Route path="profil" element={<ProfilAdmin />} />
           </Routes>
         </div>
       </main>

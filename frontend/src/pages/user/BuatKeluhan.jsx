@@ -14,12 +14,13 @@ export const BuatKeluhan = () => {
   });
 
   useEffect(() => {
-    const nama = localStorage.getItem("userName") || localStorage.getItem("nama") || "";
+    // Pastikan mengambil dari kunci yang sama dengan yang di-set di ProfilMahasiswa.jsx
+    const nama = localStorage.getItem("nama") || "";
     const email = localStorage.getItem("userEmail") || "";
+
     setForm((prev) => ({ ...prev, customer_name: nama, customer_email: email }));
     fetchCategories();
   }, []);
-
   const fetchCategories = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/categories");
