@@ -17,10 +17,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^4.22.2",
-<<<<<<< HEAD
     "google-auth-library": "^10.7.0",
-=======
->>>>>>> 44162dc820ae0a078eb841ac84789291b68ec012
     "morgan": "^1.10.0",
     "mysql2": "^3.22.5"
   },
