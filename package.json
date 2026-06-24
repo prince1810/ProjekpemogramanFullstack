@@ -4,7 +4,7 @@
   "description": "Proyek Fullstack",
   "scripts": {
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" --kill-others-on-fail --prefix \"[{name}]\" --names \"BACKEND,FRONTEND\" --handle-input false"
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
