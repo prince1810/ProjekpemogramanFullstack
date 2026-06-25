@@ -7,6 +7,9 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import DashboardMahasiswa from './pages/DashboardMahasiswa';
 import Register from './pages/Register';
 
+// [TAMBAHAN]: Import LandingPage yang baru dibuat
+import LandingPage from './pages/LandingPage';
+
 function App() {
   const { user } = useContext(AuthContext);
 
@@ -35,10 +38,17 @@ function App() {
           } 
         />
         
-        {/* Redirect Utama */}
+        {/* Redirect Utama & Landing Page */}
+        {/* [PENYESUAIAN]: Menampilkan LandingPage di awal jika belum login. Jika sudah login, cek rolenya. */}
         <Route 
           path="/" 
-          element={user ? <Navigate to="/dashboard-mahasiswa" /> : <Navigate to="/login" />} 
+          element={
+            !user ? (
+              <LandingPage />
+            ) : (
+              user.role === 'admin' ? <Navigate to="/dashboard-admin" /> : <Navigate to="/dashboard-mahasiswa" />
+            )
+          } 
         />
       </Routes>
     </Router>

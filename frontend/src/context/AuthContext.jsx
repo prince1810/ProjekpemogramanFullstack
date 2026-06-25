@@ -6,6 +6,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // [TAMBAHAN]: Fungsi khusus untuk memproses login pertama kali
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
   const updateUser = (newData) => {
     const updatedUser = { ...user, ...newData };
     setUser(updatedUser);
@@ -31,7 +37,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, updateUser, loading, logout }}>
+    // [UPDATE KECIL]: Menambahkan fungsi "login" ke dalam value agar bisa dipakai di halaman Login.jsx
+    <AuthContext.Provider value={{ user, setUser, login, updateUser, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

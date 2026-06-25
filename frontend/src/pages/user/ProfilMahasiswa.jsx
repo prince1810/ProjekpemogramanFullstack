@@ -5,13 +5,15 @@ import { User, FileText, Upload, Key, ShieldCheck } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 
 export const ProfilMahasiswa = () => {
-  const { updateUser } = useContext(AuthContext); // Mengambil fungsi updateUser dari context
+  // [UPDATE 1]: Tambahkan pemanggilan 'user' dari context agar ID-nya terbaca jika login manual
+  const { updateUser, user } = useContext(AuthContext); 
   const [activeTab, setActiveTab] = useState("profil");
   const [loading, setLoading] = useState(true);
   const [complaints, setComplaints] = useState([]);
   const [passData, setPassData] = useState({ oldPassword: "", newPassword: "" });
   
-  const userId = localStorage.getItem("userId");
+  // [UPDATE 2]: Ambil userId dari localStorage (Google Login) ATAU dari context (Login Manual)
+  const userId = localStorage.getItem("userId") || user?.id;
 
   const [studentData, setStudentData] = useState({
     nama: "", email: "", nim: "", jurusan: "", avatar: null
@@ -47,8 +49,13 @@ export const ProfilMahasiswa = () => {
     try {
       await axios.put(`http://localhost:3000/api/user/profile/${userId}`, studentData);
       
-      // Sinkronisasi ke Context agar semua halaman lain otomatis ter-update
-      updateUser({ nama: studentData.nama });
+      // [UPDATE 3]: Sinkronisasi SEMUA field ke Context agar halaman "Buat Keluhan" kebagian data terbarunya
+      updateUser({ 
+          nama: studentData.nama,
+          email: studentData.email,
+          nim: studentData.nim,
+          jurusan: studentData.jurusan
+      });
 
       Swal.fire({ icon: "success", title: "Berhasil!", text: "Profil diperbarui." });
       fetchData();
@@ -76,8 +83,12 @@ export const ProfilMahasiswa = () => {
         try {
             await axios.put(`http://localhost:3000/api/user/profile/${userId}`, { ...studentData, avatar: base64 });
             setStudentData({...studentData, avatar: base64});
+            
+            // [UPDATE 4]: Sinkronisasi foto baru ke Context juga
+            updateUser({ avatar: base64 });
+
             Swal.fire("Sukses!", "Foto diperbarui.", "success");
-        } catch(e) { Swal.fire("Error", "Gagal upload", "error"); }
+        } catch(err) { Swal.fire("Error", "Gagal upload", "error"); }
       };
       reader.readAsDataURL(e.target.files[0]);
     };

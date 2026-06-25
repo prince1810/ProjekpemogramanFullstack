@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Send, Tag, MessageSquare, ChevronDown } from "lucide-react";
+import { AuthContext } from "../../context/AuthContext"; // Tambahkan import Context
 
 export const BuatKeluhan = () => {
+  const { user } = useContext(AuthContext); // Tarik data user dari AuthContext
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -13,14 +15,22 @@ export const BuatKeluhan = () => {
     message: "",
   });
 
+  // Efek khusus untuk set nama dan email dari Context secara realtime
   useEffect(() => {
-    // Pastikan mengambil dari kunci yang sama dengan yang di-set di ProfilMahasiswa.jsx
-    const nama = localStorage.getItem("nama") || "";
-    const email = localStorage.getItem("userEmail") || "";
+    if (user) {
+      setForm((prev) => ({ 
+        ...prev, 
+        customer_name: user.nama || "", 
+        customer_email: user.email || "" 
+      }));
+    }
+  }, [user]);
 
-    setForm((prev) => ({ ...prev, customer_name: nama, customer_email: email }));
+  // Efek khusus untuk mengambil kategori (hanya jalan sekali saat halaman dimuat)
+  useEffect(() => {
     fetchCategories();
   }, []);
+
   const fetchCategories = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/categories");

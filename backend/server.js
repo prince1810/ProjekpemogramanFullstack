@@ -41,23 +41,91 @@ async function logActivity(action, tableName, recordId) {
 }
 
 // ==========================================
-// API AUTHENTICATION
+// API AUTHENTICATION (Satu Form Login untuk User & Admin)
 // ==========================================
 app.post("/api/auth-login", async (req, res) => {
   try {
-    const { user, pass } = req.body;
+    // Menggunakan 'email' dan 'password' yang dikirim dari frontend
+    const { email, password } = req.body; 
     
-    // [UPDATE]: Menambahkan "BINARY" sebelum password agar case-sensitive
-    const [adminRows] = await pool.execute(`SELECT * FROM admins WHERE username = ? AND BINARY password = ?`, [user, pass]);
-    if (adminRows.length > 0) return res.status(200).json({ role: 'admin', message: "Login Admin berhasil" });
+    // 1. Cek di tabel users (Mahasiswa) terlebih dahulu
+    const [userRows] = await pool.execute(
+      `SELECT * FROM users WHERE email = ? AND BINARY password = ?`, 
+      [email, password]
+    );
+    
+    if (userRows.length > 0) {
+      const userData = userRows[0];
+      return res.status(200).json({ 
+        success: true,
+        user: { 
+          id: userData.id, 
+          nama: userData.nama, 
+          email: userData.email, 
+          role: 'user', 
+          nim: userData.nim,
+          jurusan: userData.jurusan,
+          avatar: userData.avatar
+        },
+        message: "Login User berhasil" 
+      });
+    }
 
-    // [UPDATE]: Menambahkan "BINARY" sebelum password agar case-sensitive
-    const [userRows] = await pool.execute(`SELECT * FROM users WHERE email = ? AND BINARY password = ?`, [user, pass]);
-    if (userRows.length > 0) return res.status(200).json({ role: 'user', id: userRows[0].id, nama: userRows[0].nama, email: userRows[0].email, message: "Login User berhasil" });
+    // 2. Jika tidak ketemu di users, cek di tabel admins
+    const [adminRows] = await pool.execute(
+      `SELECT * FROM admins WHERE email = ? AND BINARY password = ?`, 
+      [email, password]
+    );
     
-    res.status(401).json({ message: "Username/Password salah!" });
+    if (adminRows.length > 0) {
+      const adminData = adminRows[0];
+      return res.status(200).json({ 
+        success: true,
+        user: { 
+          id: adminData.id, 
+          nama: adminData.nama_lengkap, 
+          email: adminData.email, 
+          role: 'admin', 
+          avatar: adminData.avatar
+        },
+        message: "Login Admin berhasil" 
+      });
+    }
+    
+    // 3. Jika email tidak terdaftar di kedua tabel atau password salah
+    res.status(401).json({ success: false, message: "Email atau Password salah!" });
   } catch (error) {
-    res.status(500).json({ message: "Database error." });
+    console.error("Login Error:", error);
+    res.status(500).json({ success: false, message: "Database error." });
+  }
+});
+
+// ==========================================
+// API STATISTIK LANDING PAGE (FITUR BARU)
+// ==========================================
+app.get('/api/statistics', async (req, res) => {
+  try {
+    // Menghitung status berdasarkan tabel complaints
+    const query = `
+      SELECT 
+        COUNT(*) AS total,
+        SUM(CASE WHEN status = 'Selesai' THEN 1 ELSE 0 END) AS selesai,
+        SUM(CASE WHEN status IN ('Diproses', 'Pending') THEN 1 ELSE 0 END) AS diproses,
+        SUM(CASE WHEN status = 'Ditolak' THEN 1 ELSE 0 END) AS ditolak
+      FROM complaints
+    `;
+    const [rows] = await pool.execute(query);
+    
+    // Kirim data ke frontend
+    res.json({
+      total: rows[0].total || 0,
+      selesai: rows[0].selesai || 0,
+      diproses: rows[0].diproses || 0,
+      ditolak: rows[0].ditolak || 0
+    });
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+    res.status(500).json({ message: "Terjadi kesalahan server" });
   }
 });
 
@@ -95,6 +163,20 @@ app.delete("/api/complaints/:id", async (req, res) => {
     res.status(200).json({ message: "Keluhan berhasil dihapus" });
   } catch (error) {
     res.status(500).json({ message: "Gagal menghapus data" });
+  }
+});
+
+// [PENAMBAHAN ROUTE UPDATE]: Ini yang tadi menyebabkan 404
+// Ganti app.put menjadi app.patch agar sinkron dengan axios.patch di frontend lu
+app.patch("/api/complaints/:id", async (req, res) => {
+  try {
+    const { status } = req.body;
+    await pool.execute("UPDATE complaints SET status = ? WHERE id = ?", [status, req.params.id]);
+    await logActivity("UPDATE_COMPLAINT_STATUS", "complaints", req.params.id);
+    res.status(200).json({ message: "Status keluhan berhasil diperbarui" });
+  } catch (error) {
+    console.error("🔴 Gagal update status:", error.message);
+    res.status(500).json({ message: "Gagal memperbarui status" });
   }
 });
 
