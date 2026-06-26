@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, User, Mail, Hash, EyeOff, Eye, ShieldCheck, MessageCircle, Zap, ArrowLeft } from 'lucide-react';
 
-// === Komponen Vektor ===
+// Logo Updated
 const EAdvocacyLogoSvg = () => (
-     <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center font-black text-[#0b3b84]">A</div>
+     <img src="/Logo-aspiralink.png" alt="Logo" className="w-14 h-14 object-contain" />
 );
 
 const ModernTechIllustrationSvg = () => (
@@ -65,82 +65,26 @@ const Register = () => {
 
     return (
         <>
-            {/* ========================================== */}
-            {/* CSS CUSTOM UNTUK ANIMASI & FONT (SAMA DENGAN LOGIN & LANDING PAGE) */}
-            {/* ========================================== */}
             <style>
                 {`
                     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-                    
-                    .font-bubble {
-                        font-family: 'Nunito', sans-serif;
-                    }
-
-                    /* Floating Stars */
-                    @keyframes twinkle {
-                        0%, 100% { opacity: .3; transform: scale(1); }
-                        50% { opacity: 1; transform: scale(1.6); }
-                    }
-                    .star {
-                        position: absolute;
-                        width: 4px;
-                        height: 4px;
-                        background: white;
-                        border-radius: 9999px;
-                        box-shadow: 0 0 15px #60a5fa;
-                        animation: twinkle 3s infinite ease-in-out;
-                    }
-
-                    /* Neon Wave */
-                    .wave-container {
-                        position: absolute;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        height: 320px;
-                        overflow: hidden;
-                        pointer-events: none;
-                        z-index: 0;
-                    }
-                    .wave-svg {
-                        width: 100%;
-                        height: 100%;
-                    }
-                    .wave-path {
-                        fill: none;
-                        stroke: #4fc3ff;
-                        stroke-width: 2;
-                        opacity: .45;
-                        filter: drop-shadow(0 0 8px #4fc3ff);
-                        stroke-dasharray: 10 8;
-                        animation: waveFlow 25s linear infinite;
-                    }
-                    @keyframes waveFlow {
-                        from { stroke-dashoffset: 0; }
-                        to { stroke-dashoffset: -1000; }
-                    }
+                    .font-bubble { font-family: 'Nunito', sans-serif; }
+                    @keyframes twinkle { 0%, 100% { opacity: .3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.6); } }
+                    .star { position: absolute; width: 4px; height: 4px; background: white; border-radius: 9999px; box-shadow: 0 0 15px #60a5fa; animation: twinkle 3s infinite ease-in-out; }
+                    .wave-container { position: absolute; left: 0; right: 0; bottom: 0; height: 320px; overflow: hidden; pointer-events: none; z-index: 0; }
+                    .wave-svg { width: 100%; height: 100%; }
+                    .wave-path { fill: none; stroke: #4fc3ff; stroke-width: 2; opacity: .45; filter: drop-shadow(0 0 8px #4fc3ff); stroke-dasharray: 10 8; animation: waveFlow 25s linear infinite; }
+                    @keyframes waveFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1000; } }
                 `}
             </style>
 
-            {/* WADAH UTAMA - Disamakan dengan Landing Page & Login */}
-            <div className="relative min-h-screen bg-[#0b3b84] font-bubble flex flex-col items-center justify-center p-4 overflow-hidden">
-                
-                {/* Layer 1: Floating Stars */}
+            <div className="relative min-h-screen bg-[#003580] font-bubble flex flex-col items-center justify-center p-4 overflow-hidden">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
                     {[...Array(35)].map((_, i) => (
-                        <span
-                            key={i}
-                            className="star"
-                            style={{
-                                top: `${Math.random() * 100}%`,
-                                left: `${Math.random() * 100}%`,
-                                animationDelay: `${Math.random() * 5}s`
-                            }}
-                        />
+                        <span key={i} className="star" style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 5}s` }} />
                     ))}
                 </div>
 
-                {/* Layer 2: Neon Wave (Di bagian bawah) */}
                 <div className="wave-container">
                     <svg className="wave-svg" viewBox="0 0 1600 400" preserveAspectRatio="none">
                         <path className="wave-path" d="M0 260 C250 100 500 350 800 220 C1100 90 1350 360 1600 180" />
@@ -149,10 +93,7 @@ const Register = () => {
                     </svg>
                 </div>
 
-                {/* Layer 3: KARTU FORM REGISTER DENGAN OUTLINE GLOWING */}
                 <div className="relative z-10 bg-white rounded-3xl shadow-[0_0_60px_rgba(96,165,250,0.4)] border border-blue-300/50 ring-4 ring-blue-400/20 flex flex-col md:flex-row w-full max-w-5xl h-full max-h-[650px] overflow-hidden">
-                    
-                    {/* BAGIAN KIRI (Biru) */}
                     <div className="hidden md:flex md:w-1/2 bg-[#003580] text-white p-8 lg:p-10 flex-col justify-between">
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-2">
@@ -174,10 +115,7 @@ const Register = () => {
                         </div>
                     </div>
 
-                    {/* BAGIAN KANAN (Putih) */}
                     <div className="w-full md:w-1/2 p-8 flex flex-col items-center justify-center bg-white overflow-y-auto relative">
-                        
-                        {/* [UPDATE]: TOMBOL KEMBALI KE LOGIN (Batal Register) */}
                         <div className="absolute top-6 left-6 md:left-8">
                             <Link to="/login" className="flex items-center gap-2 text-sm font-extrabold text-gray-400 hover:text-blue-600 transition-colors">
                                 <ArrowLeft size={16} /> Kembali

@@ -4,14 +4,13 @@ import { Lock, User, EyeOff, Eye, ShieldCheck, MessageCircle, Zap, ArrowLeft } f
 import { AuthContext } from '../context/AuthContext';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
-// === IMPORT GAMBAR ILUSTRASI LU ===
 import loginIllustration from '../assets/login-illustration_3.png';
 
+// Logo Updated
 const EAdvocacyLogoSvg = () => (
-    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center font-black text-[#0b3b84]">A</div>
+    <img src="/Logo-aspiralink.png" alt="Logo" className="w-14 h-14 object-contain" />
 );
 
-// FeatureItem diset agar ukurannya sama rata (equal width)
 const FeatureItem = ({ icon: Icon, title }) => (
     <div className="flex flex-col items-center justify-center gap-2 flex-1 bg-white/5 p-3 rounded-xl border border-white/10">
         <Icon className="w-5 h-5 text-[#fbb03b]" />
@@ -112,7 +111,6 @@ const Login = () => {
 
                 <div className="relative z-10 bg-white rounded-3xl shadow-[0_0_60px_rgba(96,165,250,0.4)] border border-blue-300/50 ring-4 ring-blue-400/20 flex flex-col md:flex-row w-full max-w-5xl h-full max-h-[580px] overflow-hidden">
                     
-                    {/* Panel Kiri */}
                     <div className="hidden md:flex md:w-1/2 bg-[#003580] p-8 lg:p-10 flex-col justify-between text-white">
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
@@ -123,12 +121,10 @@ const Login = () => {
                             <p className="text-blue-100 text-xs font-semibold">Sampaikan keluhan dan saran demi kemajuan STT-NF.</p>
                         </div>
 
-                        {/* Foto Ilustrasi Disesuaikan Ukurannya */}
                         <div className="flex-grow flex items-center justify-center my-4">
                             <img src={loginIllustration} alt="Login Illustration" className="w-full max-w-[220px]" />
                         </div>
 
-                        {/* Fitur dijejer horizontal dan rata */}
                         <div className="flex flex-row gap-2 mt-4">
                             <FeatureItem icon={ShieldCheck} title="Aman" />
                             <FeatureItem icon={MessageCircle} title="Transparan" />
@@ -136,7 +132,6 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* Panel Kanan */}
                     <div className="w-full md:w-1/2 p-8 flex flex-col items-center justify-center bg-white relative">
                         <Link to="/" className="absolute top-6 left-6 md:left-8 flex items-center gap-2 text-sm font-extrabold text-gray-400 hover:text-blue-600 transition-colors">
                             <ArrowLeft size={16} /> Kembali

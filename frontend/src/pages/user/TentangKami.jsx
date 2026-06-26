@@ -20,108 +20,94 @@ const TentangKami = () => {
   ];
 
   const teknologi = [
-    { nama: "React.js", desc: "Frontend Framework" },
-    { nama: "Tailwind CSS", desc: "Styling" },
-    { nama: "Node.js", desc: "Runtime Backend" },
-    { nama: "Express.js", desc: "Backend Framework" },
+    { nama: "React.js", desc: "Frontend" },
+    { nama: "Tailwind", desc: "Styling" },
+    { nama: "Node.js", desc: "Backend" },
+    { nama: "Express", desc: "Framework" },
     { nama: "MySQL", desc: "Database" },
-    { nama: "Vite", desc: "Build Tool" },
+    { nama: "Vite", desc: "Build" },
   ];
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
+    <div className="max-w-6xl mx-auto p-4 space-y-8 min-h-screen flex flex-col">
+      
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-600 rounded-3xl p-8 text-white">
+        <h1 className="text-2xl font-bold">AspiraLink</h1>
+        <p className="text-blue-100 text-sm">Sistem Manajemen Keluhan & Aspirasi Mahasiswa STT Nurul Fikri</p>
+      </div>
 
-      {/* Hero */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-600 rounded-3xl p-8 text-white text-center">
-        <div className="flex justify-center mb-4">
-          <div className="bg-white/20 p-4 rounded-2xl">
-            <FileText size={36} className="text-white" />
+      {/* Main Content Area: Hanya untuk Tentang Aplikasi, Teknologi, dan Fitur */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start flex-grow">
+        
+        {/* Kolom Kiri */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-3xl shadow-sm border p-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Target size={20} className="text-blue-600" /> Tentang Aplikasi
+            </h2>
+            <div className="text-sm text-gray-600 leading-relaxed space-y-3">
+              <p><strong>AspiraLink</strong> hadir sebagai solusi inovatif bagi mahasiswa STT Nurul Fikri untuk menyampaikan aspirasi dan keluhan secara digital. Kami berkomitmen untuk menjembatani komunikasi antara mahasiswa dan pihak kampus dengan platform yang transparan, aman, dan efisien.</p>
+              <p>Dengan sistem yang terintegrasi, setiap laporan yang masuk akan diverifikasi, diproses oleh divisi terkait, dan dimonitor perkembangannya secara <em>real-time</em>. Kami percaya bahwa suara setiap mahasiswa adalah kunci kemajuan kampus, dan AspiraLink memastikan bahwa tidak ada aspirasi yang terabaikan dalam upaya kami membangun lingkungan akademik yang lebih baik dan responsif.</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-sm border p-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Database size={20} className="text-blue-600" /> Teknologi yang Digunakan
+            </h2>
+            <div className="grid grid-cols-3 gap-3">
+              {teknologi.map((t, i) => (
+                <div key={i} className="p-3 bg-gray-50 border rounded-2xl text-center">
+                  <p className="font-bold text-xs text-blue-800">{t.nama}</p>
+                  <p className="text-[10px] text-gray-400">{t.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <h1 className="text-3xl font-bold">AspiraLink</h1>
-        <p className="text-blue-100 mt-2 text-sm">Sistem Manajemen Keluhan & Aspirasi Mahasiswa</p>
-        <div className="mt-4 inline-block bg-white/20 px-4 py-1.5 rounded-full text-xs font-semibold">
-          STT Nurul Fikri — 2026
-        </div>
-      </div>
 
-      {/* Tentang */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <Target size={20} className="text-blue-600" /> Tentang Aplikasi
-        </h2>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          <strong>AspiraLink</strong> adalah platform digital berbasis web yang dirancang khusus untuk memudahkan mahasiswa STT Nurul Fikri dalam menyampaikan keluhan, saran, dan aspirasi kepada pihak kampus. Nama <strong>"AspiraLink"</strong> berasal dari kata <em>Aspirasi</em> dan <em>Link</em>, yang mencerminkan misi kami sebagai jembatan penghubung antara mahasiswa dan manajemen kampus.
-        </p>
-        <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Selama ini, banyak mahasiswa yang kesulitan menyampaikan keluhan secara langsung karena tidak adanya media yang terstruktur dan transparan. AspiraLink hadir sebagai solusi dengan menyediakan sistem pelaporan yang mudah digunakan, terorganisir, dan dapat dipantau secara real-time oleh seluruh pihak yang berkepentingan.
-        </p>
-        <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Dengan AspiraLink, setiap suara mahasiswa tidak akan lagi terabaikan. Setiap keluhan yang masuk akan langsung diteruskan ke divisi terkait, diproses secara profesional, dan mahasiswa dapat memantau perkembangan statusnya secara langsung melalui platform ini.
-        </p>
-      </div>
-
-      {/* Fitur */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <Zap size={20} className="text-blue-600" /> Fitur Unggulan
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {fitur.map((f, i) => (
-            <div key={i} className="flex gap-3 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-              <div className="bg-white p-2 rounded-xl shadow-sm h-fit">{f.icon}</div>
-              <div>
-                <p className="font-semibold text-sm text-gray-800">{f.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+        {/* Kolom Kanan (Fitur Saja) */}
+        <div className="bg-white rounded-3xl shadow-sm border p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Zap size={20} className="text-blue-600" /> Fitur Unggulan
+          </h2>
+          <div className="grid grid-cols-1 gap-3">
+            {fitur.map((f, i) => (
+              <div key={i} className="flex gap-3 items-center p-3 bg-blue-50 rounded-2xl">
+                <div className="bg-white p-2 rounded-xl shadow-sm">{f.icon}</div>
+                <p className="text-xs font-semibold text-gray-700">{f.title}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Teknologi */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <Database size={20} className="text-blue-600" /> Teknologi yang Digunakan
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {teknologi.map((t, i) => (
-            <div key={i} className="p-3 bg-gray-50 border border-gray-100 rounded-2xl text-center">
-              <p className="font-bold text-sm text-blue-800">{t.nama}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{t.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tim */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
+      {/* Tim Pengembang: Pindah ke bawah sebagai Full Width */}
+      <div className="bg-white rounded-3xl shadow-sm border p-6">
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Users size={20} className="text-blue-600" /> Tim Pengembang
         </h2>
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {tim.map((t, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <div className="w-10 h-10 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                {t.nama.charAt(0)}
+            <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-900 text-white flex items-center justify-center font-bold text-xs">{t.nama.charAt(0)}</div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-800">{t.nama}</p>
+                    <p className="text-[10px] text-gray-400">{t.nim}</p>
+                  </div>
               </div>
-              <div className="flex-1">
-                <p className="font-semibold text-sm text-gray-800">{t.nama}</p>
-                <p className="text-xs text-gray-400">{t.nim}</p>
-              </div>
-              <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                {t.icon} {t.peran}
-              </span>
+              <span className="text-[10px] bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">{t.peran}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-gray-400 pb-4">
+      <footer className="text-center text-xs text-gray-400 py-8 mt-auto border-t border-gray-100">
         © 2026 AspiraLink — STT Nurul Fikri. All rights reserved.
-      </div>
-
+      </footer>
     </div>
   );
 };

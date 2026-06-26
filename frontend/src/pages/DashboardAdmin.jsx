@@ -1,9 +1,7 @@
-// src/pages/DashboardAdmin.jsx
 import React, { useContext } from "react";
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { LayoutDashboard, ClipboardList, Users, FileText, Settings, Megaphone, LogOut, User } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
-// --- IMPORT DARI FOLDER ADMIN ---
 import DashboardMain from "./admin/DashboardMain";
 import KelolaKeluhan from "./admin/KelolaKeluhan"; 
 import { KelolaPengguna, KategoriKeluhan } from "./admin/ManajemenData";
@@ -13,7 +11,7 @@ import { ProfilAdmin } from "./admin/ProfilAdmin";
 const DashboardAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useContext(AuthContext); // Ditambahkan hook untuk logout
+  const { logout } = useContext(AuthContext); 
 
   const menu = [
     { name: "Dashboard", icon: <LayoutDashboard size={20}/>, path: "/dashboard-admin" },
@@ -27,10 +25,7 @@ const DashboardAdmin = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside className="w-64 bg-[#001f54] text-white p-6 shadow-xl flex flex-col">
-        <div className="flex items-center gap-2 mb-10 text-xl font-bold">
-          <FileText className="text-blue-400" /> AspiraLink Admin
-        </div>
-        
+        <div className="text-lg font-bold mb-10">Menu Admin</div>
         <nav className="space-y-2 flex-1">
           {menu.map((item) => (
             <button 
@@ -45,7 +40,6 @@ const DashboardAdmin = () => {
           ))}
         </nav>
 
-        {/* --- BAGIAN BAWAH SIDEBAR (PROFIL & LOGOUT) --- */}
         <div className="mt-8 border-t border-blue-800/50 pt-4 space-y-2">
           <button 
             onClick={() => navigate("/dashboard-admin/profil")} 
@@ -56,10 +50,7 @@ const DashboardAdmin = () => {
             <User size={20}/> Profil Saya
           </button>
           <button 
-            onClick={() => { 
-                logout(); 
-                window.location.href = "/login"; 
-            }} 
+            onClick={() => { logout(); window.location.href = "/login"; }} 
             className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-red-600 transition"
           >
             <LogOut size={20}/> Keluar
@@ -67,18 +58,27 @@ const DashboardAdmin = () => {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-6xl mx-auto">
-          {/* RUTE PENTING: Gunakan path relatif tanpa garis miring di depan */}
-          <Routes>
-            <Route path="/" element={<DashboardMain />} />
-            <Route path="kelola-keluhan" element={<KelolaKeluhan />} />
-            <Route path="kelola-pengguna" element={<KelolaPengguna />} />
-            <Route path="kategori" element={<KategoriKeluhan />} />
-            <Route path="pengumuman" element={<Pengumuman />} />
-            <Route path="pengaturan" element={<Pengaturan />} />
-            <Route path="profil" element={<ProfilAdmin />} />
-          </Routes>
+      <main className="flex-1 flex flex-col">
+        {/* TOPBAR */}
+        <div className="bg-white px-8 py-4 shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-100.">
+             <img src="/Logo-aspiralink.png" alt="Logo" className="w-20 h-20 object-contain" />
+             <span className="font-black text-xl text-[#001f54]">AspiraLink</span>
+          </div>
+        </div>
+
+        <div className="p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto">
+            <Routes>
+              <Route path="/" element={<DashboardMain />} />
+              <Route path="kelola-keluhan" element={<KelolaKeluhan />} />
+              <Route path="kelola-pengguna" element={<KelolaPengguna />} />
+              <Route path="kategori" element={<KategoriKeluhan />} />
+              <Route path="pengumuman" element={<Pengumuman />} />
+              <Route path="pengaturan" element={<Pengaturan />} />
+              <Route path="profil" element={<ProfilAdmin />} />
+            </Routes>
+          </div>
         </div>
       </main>
     </div>

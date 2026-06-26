@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // --- IMPORT GAMBAR DARI FOLDER ASSETS ---
-import heroMockup from '../assets/hero-mockup.png'; // Pastikan path ini sesuai dengan struktur folder Anda
+import heroMockup from '../assets/hero-mockup.png'; 
 
 const LandingPage = () => {
-  // ==========================================
-  // STATE UNTUK STATISTIK REALTIME DARI DB
-  // ==========================================
   const [stats, setStats] = useState({
     total: 0,
     selesai: 0,
@@ -15,7 +12,6 @@ const LandingPage = () => {
     ditolak: 0
   });
 
-  // Fetch data dari backend saat komponen pertama kali dimuat
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -33,90 +29,29 @@ const LandingPage = () => {
   }, []);
 
   return (
-    // Menggunakan class custom "font-bubble" yang sudah kita buat di bawah
     <div className="font-bubble text-gray-800 bg-gray-50 min-h-screen">
-      
-      {/* ========================================== */}
-      {/* CSS CUSTOM UNTUK FONT BUBBLE & ANIMASI */}
-      {/* ========================================== */}
       <style>
         {`
-          /* Import Font Bergaya Bubble/Rounded (Nunito) dari Google Fonts */
           @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-
-          /* Terapkan ke class khusus */
-          .font-bubble {
-            font-family: 'Nunito', sans-serif;
-          }
-
-          /* Floating Stars */
-          @keyframes twinkle {
-            0%, 100% { opacity: .3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.6); }
-          }
-          .star {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 9999px;
-            box-shadow: 0 0 15px #60a5fa;
-            animation: twinkle 3s infinite ease-in-out;
-          }
-
-          /* Glow Laptop */
-          .mockup-glow {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            border-radius: 9999px;
-            background: #3b82f6;
-            filter: blur(120px);
-            opacity: .25;
-            animation: pulseGlow 6s ease-in-out infinite;
-          }
-          @keyframes pulseGlow {
-            50% { transform: scale(1.15); }
-          }
-
-          /* Neon Wave */
-          .wave-container {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 320px;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 0;
-          }
-          .wave-svg {
-            width: 100%;
-            height: 100%;
-          }
-          .wave-path {
-            fill: none;
-            stroke: #4fc3ff;
-            stroke-width: 2;
-            opacity: .45;
-            filter: drop-shadow(0 0 8px #4fc3ff);
-            stroke-dasharray: 10 8;
-            animation: waveFlow 25s linear infinite;
-          }
-          @keyframes waveFlow {
-            from { stroke-dashoffset: 0; }
-            to { stroke-dashoffset: -1000; }
-          }
+          .font-bubble { font-family: 'Nunito', sans-serif; }
+          @keyframes twinkle { 0%, 100% { opacity: .3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.6); } }
+          .star { position: absolute; width: 4px; height: 4px; background: white; border-radius: 9999px; box-shadow: 0 0 15px #60a5fa; animation: twinkle 3s infinite ease-in-out; }
+          .mockup-glow { position: absolute; width: 500px; height: 500px; border-radius: 9999px; background: #3b82f6; filter: blur(120px); opacity: .25; animation: pulseGlow 6s ease-in-out infinite; }
+          @keyframes pulseGlow { 50% { transform: scale(1.15); } }
+          .wave-container { position: absolute; left: 0; right: 0; bottom: 0; height: 320px; overflow: hidden; pointer-events: none; z-index: 0; }
+          .wave-svg { width: 100%; height: 100%; }
+          .wave-path { fill: none; stroke: #4fc3ff; stroke-width: 2; opacity: .45; filter: drop-shadow(0 0 8px #4fc3ff); stroke-dasharray: 10 8; animation: waveFlow 25s linear infinite; }
+          @keyframes waveFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1000; } }
         `}
       </style>
 
       {/* 1. NAVBAR */}
-      <nav className="bg-[#0b3b84] text-white py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-md">
-        <div className="flex items-center gap-2">
-          {/* Logo Placeholder */}
-          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center font-black text-[#0b3b84]">A</div>
-          <span className="text-xl font-extrabold tracking-wide">AspiraLink</span>
-        </div>
+     <nav className="bg-[#0b3b84] text-white py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-md">
+  <div className="flex items-center gap-2">
+    {/* LOGO DIUPDATET: Efek Brightness + Glow agar terang */}
+<img src="/Logo-aspiralink.png" alt="Logo" className="w-16 h-16 object-contain" />
+    <span className="text-xl font-extrabold tracking-wide">AspiraLink</span>
+  </div>
         <div className="hidden md:flex gap-6 text-sm font-bold">
           <a href="#beranda" className="hover:text-yellow-400 cursor-pointer transition">Beranda</a>
           <a href="#fitur" className="hover:text-yellow-400 cursor-pointer transition">Fitur</a>
@@ -131,23 +66,11 @@ const LandingPage = () => {
 
       {/* 2. HERO SECTION */}
       <header id="beranda" className="relative bg-[#0b3b84] text-white pt-20 pb-28 px-8 rounded-b-[3rem] overflow-hidden flex items-center min-h-[85vh]">
-        
-        {/* Layer 1: Floating Stars */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
           {[...Array(35)].map((_, i) => (
-            <span
-              key={i}
-              className="star"
-              style={{
-                top: `${Math.random() * 90}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`
-              }}
-            />
+            <span key={i} className="star" style={{ top: `${Math.random() * 90}%`, left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 5}s` }} />
           ))}
         </div>
-
-        {/* Layer 2: Neon Wave (Di bagian bawah hero) */}
         <div className="wave-container">
           <svg className="wave-svg" viewBox="0 0 1600 400" preserveAspectRatio="none">
             <path className="wave-path" d="M0 260 C250 100 500 350 800 220 C1100 90 1350 360 1600 180" />
@@ -155,20 +78,14 @@ const LandingPage = () => {
             <path className="wave-path" d="M0 340 C280 220 580 420 900 280 C1200 150 1450 400 1600 270" />
           </svg>
         </div>
-
-        {/* Layer 3: Konten Utama Hero */}
         <div className="relative z-10 w-full max-w-7xl mx-auto grid md:grid-cols-2 gap-12 lg:gap-8 items-center">
-          
           <div className="flex flex-col justify-center space-y-6 md:pr-4 lg:pr-12">
-            {/* Teks dengan font rounded (extrabold) */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.15] tracking-tight drop-shadow-lg">
               Sampaikan Aspirasi,<br />Wujudkan Kampus<br />Lebih Baik
             </h1>
-            
             <p className="text-blue-100 text-base md:text-lg max-w-lg leading-relaxed drop-shadow-md font-semibold tracking-wide">
               Laporkan keluhan fasilitas, berikan saran, dan pantau perkembangan laporan Anda secara real-time.
             </p>
-            
             <div className="flex flex-wrap gap-4 pt-4">
               <Link to="/login" className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-3.5 rounded-2xl font-extrabold shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1 flex items-center gap-2 text-sm md:text-base">
                 ✍️ Buat Laporan
@@ -177,35 +94,21 @@ const LandingPage = () => {
                 ▶ Lihat Cara Kerja
               </a>
             </div>
-            
             <div className="flex items-center gap-2 pt-6">
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-400/20 text-blue-200">🛡️</span>
-              <p className="text-sm font-bold text-blue-200">
-                Aman, Transparan, dan Terpercaya
-              </p>
+              <p className="text-sm font-bold text-blue-200">Aman, Transparan, dan Terpercaya</p>
             </div>
           </div>
-          
-          {/* Layer 4: Gambar Laptop & Glow */}
           <div className="relative flex justify-center items-center mt-12 md:mt-0">
             <div className="mockup-glow w-[300px] h-[300px] md:w-[450px] md:h-[450px]"></div>
-            
-            {/* Laptop dipertahankan ukurannya agar tidak kekecilan */}
-            <img
-              src={heroMockup}
-              alt="Mockup AspiraLink Dashboard"
-              className="relative z-10 w-full max-w-[110%] md:max-w-none md:w-[120%] lg:w-[125%] xl:w-[130%] object-contain mix-blend-screen transform md:-translate-x-4 lg:-translate-x-8"
-            />
+            <img src={heroMockup} alt="Mockup AspiraLink Dashboard" className="relative z-10 w-full max-w-[110%] md:max-w-none md:w-[120%] lg:w-[125%] xl:w-[130%] object-contain mix-blend-screen transform md:-translate-x-4 lg:-translate-x-8" />
           </div>
-
         </div>
       </header>
 
-      {/* 3. FITUR UTAMA */}
       <section id="fitur" className="py-20 px-8 max-w-7xl mx-auto text-center">
         <h3 className="text-blue-600 font-extrabold uppercase tracking-wider text-sm mb-2">Fitur Utama</h3>
         <h2 className="text-3xl font-black mb-12 text-[#0b3b84]">Kenapa Memilih AspiraLink?</h2>
-        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <FeatureCard icon="📱" title="Pelaporan Mudah" desc="Laporkan kerusakan atau masalah fasilitas hanya dalam beberapa langkah praktis." />
           <FeatureCard icon="🛡️" title="Aman dan Rahasia" desc="Identitas pelapor terlindungi dengan sistem keamanan dan enkripsi data." />
@@ -214,11 +117,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4. CARA KERJA */}
       <section id="carakerja" className="py-20 px-8 bg-white text-center">
         <h3 className="text-blue-600 font-extrabold uppercase tracking-wider text-sm mb-2">Cara Kerja</h3>
         <h2 className="text-3xl font-black mb-12 text-[#0b3b84]">Bagaimana Cara Kerjanya?</h2>
-        
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start max-w-6xl mx-auto gap-4">
           <StepItem number="1" icon="👤" title="Login" desc="Login menggunakan akun kampus Anda." />
           <StepDivider />
@@ -234,12 +135,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 5. STATISTIK */}
       <section id="statistik" className="py-20 px-8 max-w-7xl mx-auto text-center">
         <h3 className="text-blue-600 font-extrabold uppercase tracking-wider text-sm mb-2">Transparansi Data</h3>
         <h2 className="text-3xl font-black mb-12 text-[#0b3b84]">Statistik Laporan</h2>
-        
-        {/* Angka di-replace dengan state dari backend */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <StatCard number={stats.total} label="Total Laporan" icon="📄" color="text-blue-600" />
           <StatCard number={stats.selesai} label="Selesai" icon="✅" color="text-green-500" />
@@ -248,7 +146,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-[#0b3b84] text-white py-6 text-center font-bold">
         <p className="text-sm">© 2026 AspiraLink - Sistem Keluhan Fasilitas Kampus. All rights reserved.</p>
       </footer>
@@ -256,7 +153,6 @@ const LandingPage = () => {
   );
 };
 
-/* --- KOMPONEN PENDUKUNG (Reusable Components) --- */
 const FeatureCard = ({ icon, title, desc }) => (
   <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-lg transition duration-300">
     <div className="text-4xl mb-4">{icon}</div>

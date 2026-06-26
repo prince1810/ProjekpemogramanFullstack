@@ -1,6 +1,6 @@
 import React, { useContext } from "react"; 
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
-import { LayoutDashboard, PlusCircle, ClipboardList, Bell, User, Book, LogOut, FileText, ChevronDown } from "lucide-react";
+import { LayoutDashboard, PlusCircle, ClipboardList, Bell, User, Book, LogOut, ChevronDown } from "lucide-react";
 import { ProfilMahasiswa } from "./user/ProfilMahasiswa";
 import { BuatKeluhan } from "./user/BuatKeluhan";
 import { DashboardMain } from "./user/DashboardMain";
@@ -9,7 +9,7 @@ import TentangKami from "./user/TentangKami";
 
 const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-700">Halaman {title}</h2>;
 
-const DashboardMahasiswa = () => {
+const DashboardMahasiswa_2 = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, user } = useContext(AuthContext);
@@ -25,11 +25,8 @@ const DashboardMahasiswa = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* SIDEBAR */}
       <aside className="w-64 bg-[#001f54] text-white p-6 flex flex-col">
-        <h1 className="font-bold text-xl mb-10 flex items-center gap-2">
-          <FileText /> AspiraLink
-        </h1>
+        <h1 className="font-bold text-xl mb-10">Menu</h1>
         <nav className="space-y-2 flex-1">
           {menu.map((item) => (
             <button
@@ -55,51 +52,54 @@ const DashboardMahasiswa = () => {
         </div>
       </aside>
 
-      {/* KANAN: TOPBAR + KONTEN */}
       <div className="flex-1 flex flex-col">
-
         {/* TOPBAR */}
-        <div className="flex items-center justify-end gap-4 px-8 py-3 bg-white border-b border-gray-100 shadow-sm">
-          {/* Ikon Notifikasi */}
-          <button
-            onClick={() => navigate("/dashboard-mahasiswa/notifikasi")}
-            className="relative p-2 rounded-full hover:bg-gray-100 transition"
-          >
-            <Bell size={20} className="text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-          </button>
+        <div className="flex items-center justify-between px-8 py-3 bg-white border-b border-gray-100 shadow-sm">
+          {/* Logo Pindah ke Kiri Sejajar */}
+          <div className="flex items-center gap-100.">
+            <img src="/Logo-aspiralink.png" alt="Logo" className="w-20 h-20 object-contain" />
+            <span className="font-black text-lg text-[#001f54]">AspiraLink</span>
+          </div>
 
-          {/* Profil */}
-          <button
-            onClick={() => navigate("/dashboard-mahasiswa/profil")}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-50 transition"
-          >
-            {user?.avatar ? (
-              <img
-                src={
-                  user.avatar.startsWith("data:image") || user.avatar.startsWith("http")
-                    ? user.avatar
-                    : `http://localhost:3000/${user.avatar}`
-                }
-                className="w-7 h-7 rounded-full object-cover"
-                alt="avatar"
-              />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                {user?.nama?.charAt(0)?.toUpperCase() || "U"}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/dashboard-mahasiswa/notifikasi")}
+              className="relative p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <Bell size={20} className="text-gray-600" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+            </button>
+
+            <button
+              onClick={() => navigate("/dashboard-mahasiswa/profil")}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-50 transition"
+            >
+              {user?.avatar ? (
+                <img
+                  src={
+                    user.avatar.startsWith("data:image") || user.avatar.startsWith("http")
+                      ? user.avatar
+                      : `http://localhost:3000/${user.avatar}`
+                  }
+                  className="w-7 h-7 rounded-full object-cover"
+                  alt="avatar"
+                />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                  {user?.nama?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              )}
+              <div className="text-left">
+                <p className="text-xs font-semibold text-gray-800 leading-tight">
+                  {user?.nama || "Mahasiswa"}
+                </p>
+                <p className="text-[10px] text-gray-400 leading-tight">Mahasiswa</p>
               </div>
-            )}
-            <div className="text-left">
-              <p className="text-xs font-semibold text-gray-800 leading-tight">
-                {user?.nama || "Mahasiswa"}
-              </p>
-              <p className="text-[10px] text-gray-400 leading-tight">Mahasiswa</p>
-            </div>
-            <ChevronDown size={14} className="text-gray-400" />
-          </button>
+              <ChevronDown size={14} className="text-gray-400" />
+            </button>
+          </div>
         </div>
 
-        {/* KONTEN HALAMAN */}
         <main className="flex-1 p-8 bg-white shadow-inner m-4 rounded-2xl overflow-y-auto">
           <Routes>
             <Route path="/" element={<DashboardMain />} />
@@ -110,10 +110,9 @@ const DashboardMahasiswa = () => {
             <Route path="tentang-kami" element={<TentangKami />} />
           </Routes>
         </main>
-
       </div>
     </div>
   );
 };
 
-export default DashboardMahasiswa;
+export default DashboardMahasiswa_2;
