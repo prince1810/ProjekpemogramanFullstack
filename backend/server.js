@@ -45,7 +45,6 @@ async function logActivity(action, tableName, recordId) {
 // ==========================================
 app.post("/api/auth-login", async (req, res) => {
   try {
-    // Menggunakan 'email' dan 'password' yang dikirim dari frontend
     const { email, password } = req.body; 
     
     // 1. Cek di tabel users (Mahasiswa) terlebih dahulu
@@ -92,7 +91,6 @@ app.post("/api/auth-login", async (req, res) => {
       });
     }
     
-    // 3. Jika email tidak terdaftar di kedua tabel atau password salah
     res.status(401).json({ success: false, message: "Email atau Password salah!" });
   } catch (error) {
     console.error("Login Error:", error);
@@ -101,11 +99,10 @@ app.post("/api/auth-login", async (req, res) => {
 });
 
 // ==========================================
-// API STATISTIK LANDING PAGE (FITUR BARU)
+// API STATISTIK LANDING PAGE
 // ==========================================
 app.get('/api/statistics', async (req, res) => {
   try {
-    // Menghitung status berdasarkan tabel complaints
     const query = `
       SELECT 
         COUNT(*) AS total,
@@ -116,7 +113,6 @@ app.get('/api/statistics', async (req, res) => {
     `;
     const [rows] = await pool.execute(query);
     
-    // Kirim data ke frontend
     res.json({
       total: rows[0].total || 0,
       selesai: rows[0].selesai || 0,
@@ -166,8 +162,6 @@ app.delete("/api/complaints/:id", async (req, res) => {
   }
 });
 
-// [PENAMBAHAN ROUTE UPDATE]: Ini yang tadi menyebabkan 404
-// Ganti app.put menjadi app.patch agar sinkron dengan axios.patch di frontend lu
 app.patch("/api/complaints/:id", async (req, res) => {
   try {
     const { status } = req.body;
@@ -451,8 +445,34 @@ app.put("/api/user/password/:id", async (req, res) => {
   }
 });
 
+// ... (semua code di atas) ...
+
 // ==========================================
-// SERVER LISTENER
+// API: DASHBOARD STATS (INI DITAMBAHKAN DI BAWAH SEMUA API LAIN)
+// ==========================================
+app.get("/api/dashboard/stats/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const [rows] = await pool.execute(
+      `SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'Menunggu' THEN 1 ELSE 0 END) as waiting,
+        SUM(CASE WHEN status = 'Diproses' THEN 1 ELSE 0 END) as processed,
+        SUM(CASE WHEN status = 'Selesai' THEN 1 ELSE 0 END) as completed
+       FROM complaints 
+       WHERE customer_email = (SELECT email FROM users WHERE id = ?)`,
+      [userId]
+    );
+    const stats = rows[0] || { total: 0, waiting: 0, processed: 0, completed: 0 };
+    res.status(200).json(stats);
+  } catch (error) {
+    console.error("🔴 ERROR GET DASHBOARD STATS:", error.message);
+    res.status(500).json({ message: "Gagal mengambil data statistik" });
+  }
+});
+
+// ==========================================
+// SERVER LISTENER (INI HARUS PALING BAWAH, HANYA BOLEH ADA SATU)
 // ==========================================
 app.listen(port, () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);

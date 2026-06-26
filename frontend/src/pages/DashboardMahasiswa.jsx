@@ -1,9 +1,10 @@
 // src/pages/DashboardMahasiswa.jsx
-import React, { useContext } from "react"; // Ditambahkan useContext
+import React, { useContext } from "react"; 
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { LayoutDashboard, PlusCircle, ClipboardList, Bell, User, Book, LogOut, FileText } from "lucide-react";
 import { ProfilMahasiswa } from "./user/ProfilMahasiswa";
 import { BuatKeluhan } from "./user/BuatKeluhan";
+import { DashboardMain } from "./user/DashboardMain"; // Perubahan: Hanya ditambah import ini
 import { AuthContext } from "../context/AuthContext";
 const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-700">Halaman {title}</h2>;
 
@@ -53,7 +54,7 @@ const DashboardMahasiswa = () => {
 
       <main className="flex-1 p-8 bg-white shadow-inner m-4 rounded-2xl overflow-y-auto">
         <Routes>
-          <Route path="/" element={<Placeholder title="Dashboard Utama" />} />
+          <Route path="/" element={<DashboardMain />} /> {/* Perubahan: Path diupdate ke DashboardMain */}
           <Route path="buat-keluhan" element={<BuatKeluhan />} />
           <Route path="keluhan-saya" element={<Placeholder title="Keluhan Saya" />} />
           <Route path="notifikasi" element={<Placeholder title="Notifikasi" />} />

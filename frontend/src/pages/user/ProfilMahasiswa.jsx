@@ -118,7 +118,17 @@ export const ProfilMahasiswa = () => {
             <form onSubmit={handleSaveProfile} className="relative mt-12 space-y-6">
                 <div className="flex flex-col items-center">
                     <div className="relative group">
-                        <img src={studentData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(studentData.nama || 'User')}&background=001f54&color=fff`} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" alt="Avatar" />
+                        <img 
+                          src={
+                              studentData.avatar 
+                                  ? (studentData.avatar.startsWith('data:image') || studentData.avatar.startsWith('http') 
+                                      ? studentData.avatar 
+                                      : `http://localhost:3000/${studentData.avatar}`) 
+                                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentData.nama || 'User')}&background=001f54&color=fff`
+                          } 
+                          className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg" 
+                          alt="Avatar" 
+                        />
                         <button type="button" onClick={handleUploadPhoto} className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md text-blue-600"><Upload size={16}/></button>
                     </div>
                 </div>
