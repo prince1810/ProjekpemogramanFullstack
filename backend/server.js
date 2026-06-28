@@ -8,8 +8,8 @@ const app = express();
 const port = 3000;
 
 // Konfigurasi limit untuk menangani upload foto/data besar
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -23,7 +23,7 @@ const pool = mysql.createPool({
   database: "db_keluhan_pelanggan",
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
 // ==========================================
@@ -33,7 +33,7 @@ async function logActivity(action, tableName, recordId) {
   try {
     await pool.execute(
       "INSERT INTO audit_logs (action, table_name, record_id) VALUES (?, ?, ?)",
-      [action, tableName, recordId]
+      [action, tableName, recordId],
     );
   } catch (err) {
     console.error("Gagal mencatat log:", err);
@@ -41,67 +41,104 @@ async function logActivity(action, tableName, recordId) {
 }
 
 // ==========================================
-// API AUTHENTICATION (Satu Form Login untuk User & Admin)
+// API AUTHENTICATION (Login & Register)
 // ==========================================
 app.post("/api/auth-login", async (req, res) => {
   try {
-    const { email, password } = req.body; 
-    
+    const { email, password } = req.body;
+
     // 1. Cek di tabel users (Mahasiswa) terlebih dahulu
     const [userRows] = await pool.execute(
-      `SELECT * FROM users WHERE email = ? AND BINARY password = ?`, 
-      [email, password]
+      `SELECT * FROM users WHERE email = ? AND BINARY password = ?`,
+      [email, password],
     );
-    
+
     if (userRows.length > 0) {
       const userData = userRows[0];
-      return res.status(200).json({ 
+      return res.status(200).json({
         success: true,
-        user: { 
-          id: userData.id, 
-          nama: userData.nama, 
-          email: userData.email, 
-          role: 'user', 
+        user: {
+          id: userData.id,
+          nama: userData.nama,
+          email: userData.email,
+          role: "user",
           nim: userData.nim,
           jurusan: userData.jurusan,
-          avatar: userData.avatar
+          avatar: userData.avatar,
         },
-        message: "Login User berhasil" 
+        message: "Login User berhasil",
       });
     }
 
     // 2. Jika tidak ketemu di users, cek di tabel admins
     const [adminRows] = await pool.execute(
-      `SELECT * FROM admins WHERE email = ? AND BINARY password = ?`, 
-      [email, password]
+      `SELECT * FROM admins WHERE email = ? AND BINARY password = ?`,
+      [email, password],
     );
-    
+
     if (adminRows.length > 0) {
       const adminData = adminRows[0];
-      return res.status(200).json({ 
+      return res.status(200).json({
         success: true,
-        user: { 
-          id: adminData.id, 
-          nama: adminData.nama_lengkap, 
-          email: adminData.email, 
-          role: 'admin', 
-          avatar: adminData.avatar
+        user: {
+          id: adminData.id,
+          nama: adminData.nama_lengkap,
+          email: adminData.email,
+          role: "admin",
+          avatar: adminData.avatar,
         },
-        message: "Login Admin berhasil" 
+        message: "Login Admin berhasil",
       });
     }
-    
-    res.status(401).json({ success: false, message: "Email atau Password salah!" });
+
+    res
+      .status(401)
+      .json({ success: false, message: "Email atau Password salah!" });
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ success: false, message: "Database error." });
   }
 });
 
+app.post("/api/auth-register", async (req, res) => {
+  try {
+    const { nama, nim, email, password } = req.body;
+
+    // Validasi sederhana
+    if (!nama || !nim || !email || !password) {
+      return res.status(400).json({ message: "Semua data wajib diisi!" });
+    }
+
+    // Insert ke database (default role 'mahasiswa', otomatis aktif)
+    const [result] = await pool.execute(
+      "INSERT INTO users (nama, nim, email, password, role, is_active) VALUES (?, ?, ?, ?, 'mahasiswa', 1)",
+      [nama, nim, email, password],
+    );
+
+    // Catat log aktivitas opsional
+    await logActivity("REGISTER_USER", "users", result.insertId);
+
+    res.status(201).json({ success: true, message: "Registrasi berhasil!" });
+  } catch (error) {
+    console.error("🔴 Error Register:", error.message);
+
+    // Menangani error jika Email atau NIM sudah ada di database (Duplikat)
+    if (error.code === "ER_DUP_ENTRY") {
+      return res
+        .status(409)
+        .json({ message: "Email atau NIM sudah terdaftar!" });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Gagal mendaftarkan akun. Terjadi kesalahan server." });
+  }
+});
+
 // ==========================================
 // API STATISTIK LANDING PAGE
 // ==========================================
-app.get('/api/statistics', async (req, res) => {
+app.get("/api/statistics", async (req, res) => {
   try {
     const query = `
       SELECT 
@@ -112,12 +149,12 @@ app.get('/api/statistics', async (req, res) => {
       FROM complaints
     `;
     const [rows] = await pool.execute(query);
-    
+
     res.json({
       total: rows[0].total || 0,
       selesai: rows[0].selesai || 0,
       diproses: rows[0].diproses || 0,
-      ditolak: rows[0].ditolak || 0
+      ditolak: rows[0].ditolak || 0,
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
@@ -131,8 +168,10 @@ app.get('/api/statistics', async (req, res) => {
 app.post("/api/complaints", async (req, res) => {
   try {
     const { customer_name, customer_email, category_id, message } = req.body;
-    await pool.execute(`INSERT INTO complaints (customer_name, customer_email, category_id, message, status) VALUES (?, ?, ?, ?, 'Pending')`,
-      [customer_name, customer_email, category_id, message]);
+    await pool.execute(
+      `INSERT INTO complaints (customer_name, customer_email, category_id, message, status) VALUES (?, ?, ?, ?, 'Pending')`,
+      [customer_name, customer_email, category_id, message],
+    );
     res.status(201).json({ message: "Keluhan terkirim" });
   } catch (error) {
     res.status(500).json({ message: "Database error." });
@@ -165,7 +204,10 @@ app.delete("/api/complaints/:id", async (req, res) => {
 app.patch("/api/complaints/:id", async (req, res) => {
   try {
     const { status } = req.body;
-    await pool.execute("UPDATE complaints SET status = ? WHERE id = ?", [status, req.params.id]);
+    await pool.execute("UPDATE complaints SET status = ? WHERE id = ?", [
+      status,
+      req.params.id,
+    ]);
     await logActivity("UPDATE_COMPLAINT_STATUS", "complaints", req.params.id);
     res.status(200).json({ message: "Status keluhan berhasil diperbarui" });
   } catch (error) {
@@ -179,7 +221,9 @@ app.patch("/api/complaints/:id", async (req, res) => {
 // ==========================================
 app.get("/api/users", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT id, nama, email, role, is_active FROM users");
+    const [rows] = await pool.execute(
+      "SELECT id, nama, email, role, is_active FROM users",
+    );
     res.status(200).json(rows);
   } catch (error) {
     res.status(500).json({ message: "Gagal mengambil data pengguna" });
@@ -191,7 +235,7 @@ app.get("/api/audit-logs/:tableName/:recordId", async (req, res) => {
     const { tableName, recordId } = req.params;
     const [rows] = await pool.execute(
       "SELECT action, created_at FROM audit_logs WHERE table_name = ? AND record_id = ? ORDER BY created_at DESC",
-      [tableName, recordId]
+      [tableName, recordId],
     );
     res.status(200).json(rows);
   } catch (error) {
@@ -202,8 +246,15 @@ app.get("/api/audit-logs/:tableName/:recordId", async (req, res) => {
 app.patch("/api/users/:id/status", async (req, res) => {
   try {
     const { is_active } = req.body;
-    await pool.execute("UPDATE users SET is_active = ? WHERE id = ?", [is_active, req.params.id]);
-    await logActivity(is_active ? "ACTIVATE_USER" : "DEACTIVATE_USER", "users", req.params.id);
+    await pool.execute("UPDATE users SET is_active = ? WHERE id = ?", [
+      is_active,
+      req.params.id,
+    ]);
+    await logActivity(
+      is_active ? "ACTIVATE_USER" : "DEACTIVATE_USER",
+      "users",
+      req.params.id,
+    );
     res.status(200).json({ message: "Status berhasil diubah" });
   } catch (error) {
     res.status(500).json({ message: "Gagal update status" });
@@ -225,7 +276,9 @@ app.delete("/api/users/:id", async (req, res) => {
 // ==========================================
 app.get("/api/categories", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM categories ORDER BY id DESC");
+    const [rows] = await pool.execute(
+      "SELECT * FROM categories ORDER BY id DESC",
+    );
     res.status(200).json(rows);
   } catch (error) {
     console.error("🔴 ERROR AMBIL DATA KATEGORI:", error.message);
@@ -238,7 +291,7 @@ app.post("/api/categories", async (req, res) => {
     const { category_name, division, priority } = req.body;
     const [result] = await pool.execute(
       "INSERT INTO categories (category_name, division, priority) VALUES (?, ?, ?)",
-      [category_name, division, priority]
+      [category_name, division, priority],
     );
     await logActivity("CREATE_CATEGORY", "categories", result.insertId);
     res.status(201).json({ message: "Kategori berhasil ditambahkan" });
@@ -253,7 +306,7 @@ app.put("/api/categories/:id", async (req, res) => {
     const { category_name, division, priority } = req.body;
     await pool.execute(
       "UPDATE categories SET category_name = ?, division = ?, priority = ? WHERE id = ?",
-      [category_name, division, priority, req.params.id]
+      [category_name, division, priority, req.params.id],
     );
     await logActivity("UPDATE_CATEGORY", "categories", req.params.id);
     res.status(200).json({ message: "Kategori berhasil diperbarui" });
@@ -269,7 +322,12 @@ app.delete("/api/categories/:id", async (req, res) => {
     await pool.execute("DELETE FROM categories WHERE id = ?", [req.params.id]);
     res.status(200).json({ message: "Kategori berhasil dihapus" });
   } catch (error) {
-    res.status(500).json({ message: "Gagal menghapus kategori. Pastikan tidak ada keluhan yang memakai kategori ini." });
+    res
+      .status(500)
+      .json({
+        message:
+          "Gagal menghapus kategori. Pastikan tidak ada keluhan yang memakai kategori ini.",
+      });
   }
 });
 
@@ -278,7 +336,9 @@ app.delete("/api/categories/:id", async (req, res) => {
 // ==========================================
 app.get("/api/announcements", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM announcements ORDER BY created_at DESC");
+    const [rows] = await pool.execute(
+      "SELECT * FROM announcements ORDER BY created_at DESC",
+    );
     res.status(200).json(rows);
   } catch (error) {
     console.error("🔴 ERROR AMBIL PENGUMUMAN:", error.message);
@@ -288,12 +348,13 @@ app.get("/api/announcements", async (req, res) => {
 
 app.post("/api/announcements", async (req, res) => {
   try {
-    const { title, content, target_audience, attachment_link, valid_until } = req.body;
+    const { title, content, target_audience, attachment_link, valid_until } =
+      req.body;
     const finalDate = valid_until && valid_until !== "" ? valid_until : null;
 
     const [result] = await pool.execute(
       "INSERT INTO announcements (title, content, target_audience, attachment_link, valid_until, status) VALUES (?, ?, ?, ?, ?, 'Aktif')",
-      [title, content, target_audience, attachment_link, finalDate]
+      [title, content, target_audience, attachment_link, finalDate],
     );
     await logActivity("CREATE_ANNOUNCEMENT", "announcements", result.insertId);
     res.status(201).json({ message: "Pengumuman berhasil disiarkan" });
@@ -305,7 +366,10 @@ app.post("/api/announcements", async (req, res) => {
 
 app.patch("/api/announcements/:id/archive", async (req, res) => {
   try {
-    await pool.execute("UPDATE announcements SET status = 'Arsip' WHERE id = ?", [req.params.id]);
+    await pool.execute(
+      "UPDATE announcements SET status = 'Arsip' WHERE id = ?",
+      [req.params.id],
+    );
     await logActivity("ARCHIVE_ANNOUNCEMENT", "announcements", req.params.id);
     res.status(200).json({ message: "Pengumuman diarsipkan" });
   } catch (error) {
@@ -316,7 +380,9 @@ app.patch("/api/announcements/:id/archive", async (req, res) => {
 app.delete("/api/announcements/:id", async (req, res) => {
   try {
     await logActivity("DELETE_ANNOUNCEMENT", "announcements", req.params.id);
-    await pool.execute("DELETE FROM announcements WHERE id = ?", [req.params.id]);
+    await pool.execute("DELETE FROM announcements WHERE id = ?", [
+      req.params.id,
+    ]);
     res.status(200).json({ message: "Pengumuman dihapus permanen" });
   } catch (error) {
     res.status(500).json({ message: "Gagal menghapus pengumuman" });
@@ -328,7 +394,9 @@ app.delete("/api/announcements/:id", async (req, res) => {
 // ==========================================
 app.get("/api/admin/profile", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT id, username, nama_lengkap, email, role, is_2fa_active, avatar FROM admins LIMIT 1");
+    const [rows] = await pool.execute(
+      "SELECT id, username, nama_lengkap, email, role, is_2fa_active, avatar FROM admins LIMIT 1",
+    );
     if (rows.length > 0) res.status(200).json(rows[0]);
     else res.status(404).json({ message: "Admin tidak ditemukan" });
   } catch (error) {
@@ -342,7 +410,7 @@ app.put("/api/admin/profile", async (req, res) => {
     const { nama_lengkap, email, avatar } = req.body;
     await pool.execute(
       "UPDATE admins SET nama_lengkap = ?, email = ?, avatar = ? WHERE id = 1",
-      [nama_lengkap, email, avatar]
+      [nama_lengkap, email, avatar],
     );
     await logActivity("UPDATE_ADMIN_PROFILE", "admins", 1);
     res.status(200).json({ message: "Profil berhasil diperbarui" });
@@ -355,11 +423,15 @@ app.put("/api/admin/profile", async (req, res) => {
 app.put("/api/admin/password", async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const [admin] = await pool.execute("SELECT password FROM admins WHERE id = 1");
+    const [admin] = await pool.execute(
+      "SELECT password FROM admins WHERE id = 1",
+    );
     if (admin.length === 0 || admin[0].password !== oldPassword) {
       return res.status(400).json({ message: "Kata sandi saat ini salah!" });
     }
-    await pool.execute("UPDATE admins SET password = ? WHERE id = 1", [newPassword]);
+    await pool.execute("UPDATE admins SET password = ? WHERE id = 1", [
+      newPassword,
+    ]);
     await logActivity("UPDATE_ADMIN_PASSWORD", "admins", 1);
     res.status(200).json({ message: "Kata sandi diperbarui" });
   } catch (error) {
@@ -371,8 +443,14 @@ app.put("/api/admin/password", async (req, res) => {
 app.patch("/api/admin/2fa", async (req, res) => {
   try {
     const { is_2fa_active } = req.body;
-    await pool.execute("UPDATE admins SET is_2fa_active = ? WHERE id = 1", [is_2fa_active]);
-    await logActivity(is_2fa_active ? "ENABLE_2FA" : "DISABLE_2FA", "admins", 1);
+    await pool.execute("UPDATE admins SET is_2fa_active = ? WHERE id = 1", [
+      is_2fa_active,
+    ]);
+    await logActivity(
+      is_2fa_active ? "ENABLE_2FA" : "DISABLE_2FA",
+      "admins",
+      1,
+    );
     res.status(200).json({ message: "Status 2FA diperbarui" });
   } catch (error) {
     console.error("🔴 ERROR UPDATE 2FA:", error.message);
@@ -387,7 +465,7 @@ app.get("/api/user/profile/:id", async (req, res) => {
   try {
     const [rows] = await pool.execute(
       "SELECT id, nama, email, nim, jurusan, avatar FROM users WHERE id = ?",
-      [req.params.id]
+      [req.params.id],
     );
     if (rows.length > 0) res.status(200).json(rows[0]);
     else res.status(404).json({ message: "Data mahasiswa tidak ditemukan" });
@@ -402,7 +480,7 @@ app.put("/api/user/profile/:id", async (req, res) => {
     const { nama, email, nim, jurusan, avatar } = req.body;
     await pool.execute(
       "UPDATE users SET nama = ?, email = ?, nim = ?, jurusan = ?, avatar = ? WHERE id = ?",
-      [nama, email, nim, jurusan, avatar, req.params.id]
+      [nama, email, nim, jurusan, avatar, req.params.id],
     );
     await logActivity("UPDATE_USER_PROFILE", "users", req.params.id);
     res.status(200).json({ message: "Profil berhasil diperbarui permanen" });
@@ -420,7 +498,7 @@ app.get("/api/user/complaints/:id", async (req, res) => {
        LEFT JOIN categories cat ON c.category_id = cat.id
        WHERE c.customer_email = (SELECT email FROM users WHERE id = ?)
        ORDER BY c.created_at DESC`,
-      [req.params.id]
+      [req.params.id],
     );
     res.status(200).json(rows);
   } catch (error) {
@@ -432,11 +510,17 @@ app.get("/api/user/complaints/:id", async (req, res) => {
 app.put("/api/user/password/:id", async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const [user] = await pool.execute("SELECT password FROM users WHERE id = ?", [req.params.id]);
+    const [user] = await pool.execute(
+      "SELECT password FROM users WHERE id = ?",
+      [req.params.id],
+    );
     if (user.length === 0 || user[0].password !== oldPassword) {
       return res.status(400).json({ message: "Kata sandi lama salah!" });
     }
-    await pool.execute("UPDATE users SET password = ? WHERE id = ?", [newPassword, req.params.id]);
+    await pool.execute("UPDATE users SET password = ? WHERE id = ?", [
+      newPassword,
+      req.params.id,
+    ]);
     await logActivity("UPDATE_USER_PASSWORD", "users", req.params.id);
     res.status(200).json({ message: "Kata sandi berhasil diperbarui" });
   } catch (error) {
@@ -445,10 +529,8 @@ app.put("/api/user/password/:id", async (req, res) => {
   }
 });
 
-// ... (semua code di atas) ...
-
 // ==========================================
-// API: DASHBOARD STATS (INI DITAMBAHKAN DI BAWAH SEMUA API LAIN)
+// API: DASHBOARD STATS
 // ==========================================
 app.get("/api/dashboard/stats/:id", async (req, res) => {
   try {
@@ -461,9 +543,14 @@ app.get("/api/dashboard/stats/:id", async (req, res) => {
         SUM(CASE WHEN status = 'Selesai' THEN 1 ELSE 0 END) as completed
        FROM complaints 
        WHERE customer_email = (SELECT email FROM users WHERE id = ?)`,
-      [userId]
+      [userId],
     );
-    const stats = rows[0] || { total: 0, waiting: 0, processed: 0, completed: 0 };
+    const stats = rows[0] || {
+      total: 0,
+      waiting: 0,
+      processed: 0,
+      completed: 0,
+    };
     res.status(200).json(stats);
   } catch (error) {
     console.error("🔴 ERROR GET DASHBOARD STATS:", error.message);
