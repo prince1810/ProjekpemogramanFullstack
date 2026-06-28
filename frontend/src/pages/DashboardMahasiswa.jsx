@@ -6,6 +6,7 @@ import { BuatKeluhan } from "./user/BuatKeluhan";
 import { DashboardMain } from "./user/DashboardMain";
 import { AuthContext } from "../context/AuthContext";
 import TentangKami from "./user/TentangKami";
+import { KeluhanSaya } from "./user/KeluhanSaya";
 
 const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-700">Halaman {title}</h2>;
 
@@ -100,16 +101,16 @@ const DashboardMahasiswa_2 = () => {
           </div>
         </div>
 
-        <main className="flex-1 p-8 bg-white shadow-inner m-4 rounded-2xl overflow-y-auto">
-          <Routes>
-            <Route path="/" element={<DashboardMain />} />
-            <Route path="buat-keluhan" element={<BuatKeluhan />} />
-            <Route path="keluhan-saya" element={<Placeholder title="Keluhan Saya" />} />
-            <Route path="notifikasi" element={<Placeholder title="Notifikasi" />} />
-            <Route path="profil" element={<ProfilMahasiswa />} />
-            <Route path="tentang-kami" element={<TentangKami />} />
-          </Routes>
-        </main>
+      <main className="flex-1 p-8 bg-white shadow-inner m-4 rounded-2xl overflow-y-auto">
+        <Routes>
+          <Route path="/" element={<DashboardMain />} />
+          <Route path="buat-keluhan" element={<BuatKeluhan />} />
+          <Route path="keluhan-saya" element={<KeluhanSaya />} />
+          <Route path="notifikasi" element={<Placeholder title="Notifikasi" />} />
+          <Route path="profil" element={<ProfilMahasiswa />} />
+          <Route path="tentang-kami" element={<TentangKami />} />
+        </Routes>
+      </main>
       </div>
     </div>
   );
