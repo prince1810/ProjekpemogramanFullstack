@@ -6,8 +6,8 @@ import { BuatKeluhan } from "./user/BuatKeluhan";
 import { DashboardMain } from "./user/DashboardMain";
 import { AuthContext } from "../context/AuthContext";
 import TentangKami from "./user/TentangKami";
-
-const Placeholder = ({ title }) => <h2 className="text-2xl font-bold text-gray-700">Halaman {title}</h2>;
+import { KeluhanSaya } from "./user/KeluhanSaya";
+import Notifikasi from "./user/Notifikasi"; // ✅ Import ditambahkan
 
 const DashboardMahasiswa_2 = () => {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const DashboardMahasiswa_2 = () => {
       <div className="flex-1 flex flex-col">
         {/* TOPBAR */}
         <div className="flex items-center justify-between px-8 py-3 bg-white border-b border-gray-100 shadow-sm">
-          {/* Logo Pindah ke Kiri Sejajar */}
+          {/* Logo */}
           <div className="flex items-center gap-100.">
             <img src="/Logo-aspiralink.png" alt="Logo" className="w-20 h-20 object-contain" />
             <span className="font-black text-lg text-[#001f54]">AspiraLink</span>
@@ -104,8 +104,8 @@ const DashboardMahasiswa_2 = () => {
           <Routes>
             <Route path="/" element={<DashboardMain />} />
             <Route path="buat-keluhan" element={<BuatKeluhan />} />
-            <Route path="keluhan-saya" element={<Placeholder title="Keluhan Saya" />} />
-            <Route path="notifikasi" element={<Placeholder title="Notifikasi" />} />
+            <Route path="keluhan-saya" element={<KeluhanSaya />} />
+            <Route path="notifikasi" element={<Notifikasi />} /> {/* ✅ Sudah diganti */}
             <Route path="profil" element={<ProfilMahasiswa />} />
             <Route path="tentang-kami" element={<TentangKami />} />
           </Routes>
