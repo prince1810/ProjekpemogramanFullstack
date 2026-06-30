@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { FileText, Clock, RefreshCw, CheckCircle, Loader2 } from 'lucide-react';
+import { FileText, Clock, RefreshCw, CheckCircle, Loader2, Megaphone } from 'lucide-react';
 import { AuthContext } from "../../context/AuthContext";
 
 export const DashboardMain = () => {
@@ -10,7 +10,7 @@ export const DashboardMain = () => {
   const navigate = useNavigate();
   
   const [stats, setStats] = useState({ total: 0, waiting: 0, processed: 0, completed: 0 });
-  const [announcements, setAnnouncements] = useState([]); // Default kosong untuk disambungkan ke Admin nanti
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
@@ -19,7 +19,6 @@ export const DashboardMain = () => {
         if (!user?.id) return;
         
         setLoading(true);
-        // Mengambil data keluhan user
         const res = await axios.get(`http://localhost:3000/api/user/complaints/${user.id}`);
         const data = res.data;
         
@@ -29,6 +28,11 @@ export const DashboardMain = () => {
           processed: data.filter(item => item.status === 'Diproses').length,
           completed: data.filter(item => item.status === 'Selesai').length,
         });
+
+        // Ambil pengumuman aktif dari admin
+        const resAnn = await axios.get(`http://localhost:3000/api/announcements`);
+        const activeAnnouncements = resAnn.data.filter(item => item.status === 'Aktif');
+        setAnnouncements(activeAnnouncements);
       } catch (err) {
         console.error("Gagal memuat data:", err);
       } finally {
@@ -38,7 +42,6 @@ export const DashboardMain = () => {
     fetchDashboardData();
   }, [user]);
 
-  // Data untuk Grafik Batang
   const chartData = [
     { name: 'Menunggu', value: stats.waiting, color: '#fbbf24' },
     { name: 'Diproses', value: stats.processed, color: '#3b82f6' },
@@ -60,7 +63,6 @@ export const DashboardMain = () => {
         <p className="text-gray-500">Selamat datang kembali, {user?.nama || "Mahasiswa"} 👋</p>
       </div>
 
-      {/* Grid Statistik Atas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
           { title: "Total", count: stats.total, icon: <FileText size={20}/>, color: "text-blue-600", bg: "bg-blue-100" },
@@ -79,7 +81,6 @@ export const DashboardMain = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Grafik Keluhan */}
         <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-5 border">
           <h2 className="font-semibold mb-4 text-sm">Grafik Keluhan</h2>
           <ResponsiveContainer width="100%" height={200}>
@@ -97,22 +98,32 @@ export const DashboardMain = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Papan Informasi (Admin Ready) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="bg-white rounded-2xl shadow-sm p-5 border flex-grow">
-            <h2 className="font-semibold mb-4 text-sm">Papan Informasi</h2>
+            <h2 className="font-semibold mb-4 text-sm flex items-center gap-2">
+              <Megaphone size={16} className="text-blue-600" /> Papan Informasi
+            </h2>
             
-            {/* Scrollable area */}
             <div className="h-[250px] overflow-y-auto pr-2 space-y-3">
               {announcements.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-400 text-sm italic">
                   <p>Belum ada pengumuman saat ini.</p>
                 </div>
               ) : (
-                announcements.map((item, index) => (
-                  <div key={index} className="p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-                    <h4 className="text-sm font-bold">{item.title}</h4>
+                announcements.map((item) => (
+                  <div key={item.id} className="p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4 className="text-sm font-bold">{item.title}</h4>
+                      <span className="text-[10px] text-gray-400 whitespace-nowrap">
+                        {new Date(item.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                      </span>
+                    </div>
                     <p className="text-xs text-gray-500 mt-1">{item.content}</p>
+                    {item.attachment_link && (
+                      <a href={item.attachment_link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline mt-1 inline-block">
+                        Lihat lampiran →
+                      </a>
+                    )}
                   </div>
                 ))
               )}
